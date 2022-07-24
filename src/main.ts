@@ -1,22 +1,28 @@
-import { Plugin } from "obsidian";
+import { getLinkpath, Plugin } from "obsidian";
 
 export default class BetterGalleryPlugin extends Plugin {
   async onload() {
     this.registerMarkdownCodeBlockProcessor("better-gallery", (source, el, ctx) => {
-      const rows = source.split("\n").filter((row) => row.length > 0);
+    	const rows = source.split("\n").filter((row) => row.length > 0);
 
-      const table = el.createEl("table");
-      const body = table.createEl("tbody");
+    	const div = el.createEl("div", { cls: 'image-grid' });
 
-      for (let i = 0; i < rows.length; i++) {
-        const cols = rows[i].split(",");
-
-        const row = body.createEl("tr");
-
-        for (let j = 0; j < cols.length; j++) {
-          row.createEl("td", { text: cols[j] });
-        }
-      }
+		for (var row of rows) {
+			console.log(getLinkpath(row))
+			var destFile = app.metadataCache.getFirstLinkpathDest(row, ctx.sourcePath);
+			if (destFile) {
+				const img = div.createEl("img");
+				img.src = this.app.vault.adapter.getResourcePath(destFile.path);
+			}
+		}
+		for (var row of rows) {
+			console.log(getLinkpath(row))
+			var destFile = app.metadataCache.getFirstLinkpathDest(row, ctx.sourcePath);
+			if (destFile) {
+				const img = div.createEl("img");
+				img.src = this.app.vault.adapter.getResourcePath(destFile.path);
+			}
+		}
     });
   }
 }
