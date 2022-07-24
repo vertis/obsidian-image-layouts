@@ -3,3 +3,54 @@
 	grid-template-columns: repeat(4, minmax(auto, auto));
 	gap: 0.25rem;
 }
+
+.image-two-up {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 0.25rem;
+}
+
+
+.beautiful-images-feature-left {
+	display: grid;
+	grid-gap: 1rem;
+	grid-template-columns:
+		2fr 1fr;
+	grid-template-areas:
+		"1 2"
+		"1 3";
+	max-width: 1000px;
+}
+
+.beautiful-images-feature-left > div {
+	display: flex;
+	overflow: hidden;
+}
+
+.beautiful-images-feature-left > div > img {
+	width: 100%;
+	aspect-ratio: calc(4 / 3);
+	object-fit: cover;
+}
+
+.beautiful-images-feature-right {
+	display: grid;
+	grid-gap: 1rem;
+	grid-template-columns:
+		2fr 1fr;
+	grid-template-areas:
+		"2 1"
+		"3 1";
+	max-width: 1000px;
+}
+
+.beautiful-images-feature-right > div {
+	display: flex;
+	overflow: hidden;
+}
+
+.beautiful-images-feature-right > div > img {
+	width: 100%;
+	aspect-ratio: calc(4 / 3);
+	object-fit: cover;
+}
