@@ -1,5 +1,14 @@
 import { getLinkpath, Plugin } from "obsidian";
 
+const layoutImages: Record<string, number> = {
+	'a': 2,
+	'b': 2,
+	'c': 3,
+	'd': 3,
+	'e': 4,
+	'f': 4,
+}
+
 const addImageFromLink = (link: string, sourcePath: string, parent: HTMLElement, plugin: Plugin) => {
 	var destFile = app.metadataCache.getFirstLinkpathDest(link, sourcePath);
 	if (destFile) {
@@ -14,46 +23,46 @@ const addPlaceHolder = (widthXHeight: string, parent: HTMLElement) => {
 	img.src = `https://via.placeholder.com/${widthXHeight}`;
 }
 
-export default class BetterGalleryPlugin extends Plugin {
+const addImageOrPlaceholder = (link: string | undefined, sourcePath: string, parent: HTMLElement, plugin: Plugin, divCls?: string) => {
+	const div = parent.createEl("div", { cls: divCls });
+	if (link) {
+		addImageFromLink(link, sourcePath, div, plugin);
+	} else {
+		addPlaceHolder('640x480', div);
+	}
+}
+
+const renderLayout = (
+	images: string[],
+	layout: string,
+	sourcePath: string,
+	parent: HTMLElement,
+	plugin: Plugin) => {
+			
+
+	const div = parent.createEl("div", { cls: `beautiful-images-grid beautiful-images-layout-${layout}` });
+
+	addImageOrPlaceholder(images[0], sourcePath, div, plugin, 'beautiful-images-grid-area-feature')
+	for (let i = 1; i < layoutImages[layout]; i++) {
+		addImageOrPlaceholder(images[i], sourcePath, div, plugin)
+	}
+}
+
+const getImages = (source: string) => {
+	const lines = source.split('\n').filter((row) => row.startsWith('!'));
+	const images = lines.map((line) => line.replace(/!\[\[(.+)\]\]/, '$1'))
+	console.log(images);
+	return images;
+}
+
+export default class BeautifulImagesPlugin extends Plugin {
   async onload() {
-    this.registerMarkdownCodeBlockProcessor("better-gallery", (source, el, ctx) => {
-    	const rows = source.split("\n").filter((row) => row.length > 0);
-
-    	const div = el.createEl("div", { cls: 'image-grid' });
-
-		for (var row of rows) {
-			addImageFromLink(row, ctx.sourcePath, div, this);
-		}
-
+	Object.keys(layoutImages).forEach((layout) => {
+		this.registerMarkdownCodeBlockProcessor(`beautiful-images-layout-${layout}`, (source, el, ctx) => {
+			console.log(`beautiful-images-layout-${layout}`);
+			const images = getImages(source);
+			renderLayout(images, layout, ctx.sourcePath, el, this);
+		});
 	});
-	  
-	this.registerMarkdownCodeBlockProcessor("better-gallery-two-up", (source, el, ctx) => {
-		const rows = source.split("\n").filter((row) => row.length > 0);
-
-		const div = el.createEl("div", { cls: 'image-two-up' });
-
-		rows[0] ? addImageFromLink(rows[0], ctx.sourcePath, div, this) : addPlaceHolder("640x480", div);
-		rows[1] ? addImageFromLink(rows[1], ctx.sourcePath, div, this) : addPlaceHolder("640x480", div);
-	});
-	  
-	this.registerMarkdownCodeBlockProcessor("beautiful-images-feature-left", (source, el, ctx) => {
-		const rows = source.split("\n").filter((row) => row.length > 0);
-
-		const div = el.createEl("div", { cls: 'beautiful-images-feature-left' });
-
-		const leftDiv = div.createEl("div", { cls: 'beautiful-images-feature-left-feature' });
-		rows[0] ?
-			addImageFromLink(rows[0], ctx.sourcePath, leftDiv, this) :
-			addPlaceHolder("640x480", leftDiv);
-		
-		const right1Div = div.createEl("div");
-		rows[1] ?
-			addImageFromLink(rows[1], ctx.sourcePath, right1Div, this) :
-			addPlaceHolder("640x480", right1Div);
-		const right2Div = div.createEl("div");
-		rows[2] ?
-			addImageFromLink(rows[2], ctx.sourcePath, right2Div, this) :
-			addPlaceHolder("640x480", right2Div);
-    });
   }
 }
