@@ -9,10 +9,13 @@ const regexMdGlobal = /\[([^\]]*)\]\(([^\(]*)\)/g
 const layoutImages: Record<string, number> = {
 	'a': 2,
 	'b': 2,
-	'c': 3,
+	'c': 2,
 	'd': 3,
-	'e': 4,
+	'e': 3,
 	'f': 4,
+	'g': 4,
+	'h': 3,
+	'i': 4,
 }
 
 const addImageFromLink = (link: string, sourcePath: string, parent: HTMLElement, plugin: Plugin) => {
@@ -21,6 +24,11 @@ const addImageFromLink = (link: string, sourcePath: string, parent: HTMLElement,
 		const img = parent.createEl("img");
 		img.src = plugin.app.vault.adapter.getResourcePath(destFile.path);
 	}
+}
+
+const addExternalImage = (link: string, parent: HTMLElement) => {
+	const img = parent.createEl("img");
+	img.src = link;
 }
 
 const addPlaceHolder = (widthXHeight: string, parent: HTMLElement) => {
@@ -62,6 +70,9 @@ const renderLayout = (
 		const imgdiv = div.createEl("div", { cls: `beautiful-images-image-${idx}` });
 		if (image.type === 'local') {
 			addImageFromLink(image.link, sourcePath, imgdiv, plugin);
+		} else if (image.type === 'external') {
+			console.log(image.link);
+			addExternalImage(image.link, imgdiv);
 		} else if (image.type === 'placeholder') {
 			addPlaceHolder('640x480', imgdiv);
 		}
