@@ -1,7 +1,7 @@
 {
-	"name": "obsidian-better-gallery",
+	"name": "obsidian-beautiful-images",
 	"version": "1.0.1",
-	"description": "This is a sample plugin for Obsidian (https://obsidian.md)",
+	"description": "Add beautiful image layouts to your notes",
 	"main": "main.js",
 	"scripts": {
 		"dev": "node esbuild.config.mjs",
