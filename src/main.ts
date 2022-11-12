@@ -55,10 +55,10 @@ const renderLayout = (
 		images = images.slice(0, layoutImagesCount);
 	}
 
-	const div = parent.createEl("div", { cls: `beautiful-images-grid beautiful-images-layout-${layout}` });
+	const div = parent.createEl("div", { cls: `image-layouts-grid image-layouts-layout-${layout}` });
 
 	images.forEach((image, idx) => {
-		const imgdiv = div.createEl("div", { cls: `beautiful-images-image-${idx}` });
+		const imgdiv = div.createEl("div", { cls: `image-layouts-image-${idx}` });
 		if (image.type === 'local') {
 			addImageFromLink(image.link, sourcePath, imgdiv, plugin);
 		} else if (image.type === 'external') {
@@ -101,11 +101,11 @@ const getImageFromLine = (line: string): ImageLink | null => {
 	return null;
 }
 
-export default class BeautifulImagesPlugin extends Plugin {
+export default class ImageLayoutsPlugin extends Plugin {
   async onload() {
 	Object.keys(layoutImages).forEach((layout) => {
-		this.registerMarkdownCodeBlockProcessor(`beautiful-images-layout-${layout}`, (source, el, ctx) => {
-			console.log(`beautiful-images-layout-${layout}`);
+		this.registerMarkdownCodeBlockProcessor(`image-layouts-layout-${layout}`, (source, el, ctx) => {
+			console.log(`image-layouts-layout-${layout}`);
 			const images = getImages(source);
 			renderLayout(images, layout, ctx.sourcePath, el, this);
 		});
