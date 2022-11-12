@@ -104,8 +104,7 @@ const getImageFromLine = (line: string): ImageLink | null => {
 export default class ImageLayoutsPlugin extends Plugin {
   async onload() {
 	Object.keys(layoutImages).forEach((layout) => {
-		this.registerMarkdownCodeBlockProcessor(`image-layouts-layout-${layout}`, (source, el, ctx) => {
-			console.log(`image-layouts-layout-${layout}`);
+		this.registerMarkdownCodeBlockProcessor(`image-layout-${layout}`, (source, el, ctx) => {
 			const images = getImages(source);
 			renderLayout(images, layout, ctx.sourcePath, el, this);
 		});
