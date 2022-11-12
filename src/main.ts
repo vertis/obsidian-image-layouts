@@ -70,6 +70,33 @@ const renderLayout = (
 	});
 }
 
+const renderMasonryLayout = (
+	images: ImageLink[],
+	columns: number,
+	sourcePath: string,
+	parent: HTMLElement,
+	plugin: Plugin) => {
+	const div = parent.createEl("div", { cls: `image-layouts-masonry-grid-${columns}` });
+	
+	// create the an array of divs to hold the images
+	const columnDivs: HTMLElement[] = [];
+	for (let i = 0; i < columns; i++) {
+		const colDiv = div.createEl("div", { cls: `image-layouts-masonry-column` });
+		columnDivs.push(colDiv);
+	}
+
+	images.forEach((image, idx) => {
+		const colIdx = idx % columns;
+		const imgdiv = columnDivs[colIdx].createEl("div", { cls: `image-layouts-masonry-image-${idx}` });
+		if (image.type === 'local') {
+			addImageFromLink(image.link, sourcePath, imgdiv, plugin);
+		} else if (image.type === 'external') {
+			console.log(image.link);
+			addExternalImage(image.link, imgdiv);
+		}
+	});
+}
+
 const getImages = (source: string): ImageLink[] => {
 	const lines = source.split('\n').filter((row) => row.startsWith('!'));
 	const images = lines.map((line) => getImageFromLine(line));
@@ -109,5 +136,11 @@ export default class ImageLayoutsPlugin extends Plugin {
 			renderLayout(images, layout, ctx.sourcePath, el, this);
 		});
 	});
+	  for (let i = 2; i <= 6; i++) {
+		this.registerMarkdownCodeBlockProcessor(`image-layout-masonry-${i}`, (source, el, ctx) => {
+			const images = getImages(source);
+			renderMasonryLayout(images, i, ctx.sourcePath, el, this);
+		});
+	  }
   }
 }
