@@ -1,6 +1,6 @@
 {
 	"name": "obsidian-image-layouts",
-	"version": "0.9.0",
+	"version": "0.10.0",
 	"description": "Add beautiful image layouts to your notes",
 	"main": "main.js",
 	"scripts": {
