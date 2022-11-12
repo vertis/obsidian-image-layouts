@@ -37,15 +37,6 @@ const addPlaceHolder = (widthXHeight: string, parent: HTMLElement) => {
 	img.src = `https://via.placeholder.com/${widthXHeight}`;
 }
 
-const addImageOrPlaceholder = (link: string | undefined, sourcePath: string, parent: HTMLElement, plugin: Plugin, divCls?: string) => {
-	const div = parent.createEl("div", { cls: divCls });
-	if (link) {
-		addImageFromLink(link, sourcePath, div, plugin);
-	} else {
-		addPlaceHolder('640x480', div);
-	}
-}
-
 const renderLayout = (
 	images: ImageLink[],
 	layout: string,
@@ -77,11 +68,6 @@ const renderLayout = (
 			addPlaceHolder('640x480', imgdiv);
 		}
 	});
-
-	// addImageOrPlaceholder(images[0], sourcePath, div, plugin, 'beautiful-images-grid-area-feature')
-	// for (let i = 1; i < layoutImages[layout]; i++) {
-	// 	addImageOrPlaceholder(images[i], sourcePath, div, plugin)
-	// }
 }
 
 const getImages = (source: string): ImageLink[] => {
