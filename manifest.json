@@ -3,7 +3,7 @@
 	"name": "Image Layouts",
 	"version": "0.9.0",
 	"minAppVersion": "0.12.0",
-	"description": "Include image layouts in your notes",
+	"description": "Add beautiful image layouts to your notes",
 	"author": "Luke Chadwick",
 	"authorUrl": "https://vertis.io",
 	"isDesktopOnly": false
