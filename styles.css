@@ -109,5 +109,46 @@
 		"image-0 image-1 image-2 image-3";
 }
 
+.image-layouts-masonry-grid-2 {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	grid-template-rows: masonry;
+	grid-gap: 0.5rem;
+}
+
+.image-layouts-masonry-grid-3 {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	grid-template-rows: masonry;
+	grid-gap: 0.5rem;
+}
+
+.image-layouts-masonry-grid-4 {
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	grid-template-rows: masonry;
+	grid-gap: 0.5rem;
+}
+
+.image-layouts-masonry-grid-5 {
+	display: grid;
+	grid-template-columns: repeat(5, 1fr);
+	grid-template-rows: masonry;
+	grid-gap: 0.5rem;
+}
+
+.image-layouts-masonry-grid-6 {
+	display: grid;
+	grid-template-columns: repeat(6, 1fr);
+	grid-template-rows: masonry;
+	grid-gap: 0.5rem;
+}
+
+.image-layouts-masonry-column {
+	display: flex;
+	flex-direction: column;
+	/* gap: 0.5rem; */
+}
+
 
 
