@@ -14,9 +14,11 @@ The number of images varies depending on the layout. If you don't have enough it
 
 When I find time I'm hoping to add the following:
 
--   Overlay text on images
--   Image captions
--   General gallery to support scrolling through photos
+- Overlay text on images
+- Image captions
+- General gallery to support scrolling through photos
+- Drag and drop support
+- Visually pick empty layouts
 
 ## Available Layouts
 
