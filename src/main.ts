@@ -111,21 +111,32 @@ type ImageLink = {
 }
 
 const getImageFromLine = (line: string): ImageLink | null => {
-	if (line.match(regexMdGlobal)) {
-		const link = line.match(regexParenthesis)?.[1];
-		if (link) {
-			return { type: 'external', link };
-		}
-	} else if (line.match(regexWikiGlobal)) {
-		const link = line.match(regexWiki)?.[1];
-		if (link) {
-			return {
-				type: 'local',
-				link: link
-			}
-		}
-	}
-	return null;
+	let _a, _b;
+    if (line.match(regexMdGlobal)) {
+        const link = (_a = line.match(regexParenthesis)) == null ? void 0 : _a[1];
+        if (link) {
+            if (link.toLowerCase().startsWith("http")) {
+                return {
+                    type: "external",
+                    link
+                };
+            } else {
+                return {
+                    type: "local",
+                    link
+                };
+            }
+        }
+    } else if (line.match(regexWikiGlobal)) {
+        const link = (_b = line.match(regexWiki)) == null ? void 0 : _b[1];
+        if (link) {
+            return {
+                type: "local",
+                link
+            };
+        }
+    }
+    return null;
 }
 
 export default class ImageLayoutsPlugin extends Plugin {
