@@ -114,17 +114,10 @@ const getImageFromLine = (line: string): ImageLink | null => {
     if (line.match(regexMdGlobal)) {
         const link = line.match(regexParenthesis)?.[1];
         if (link) {
-            if (link.toLowerCase().startsWith("http")) {
-                return {
-                    type: "external",
-                    link
-                };
-            } else {
-                return {
-                    type: "local",
-                    link
-                };
-            }
+			return {
+				type: link.toLowerCase().startsWith("http") ? "external" : "local",
+				link
+			};
         }
     } else if (line.match(regexWikiGlobal)) {
         const link = line.match(regexWiki)?.[1];
