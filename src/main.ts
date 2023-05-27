@@ -111,7 +111,6 @@ type ImageLink = {
 }
 
 const getImageFromLine = (line: string): ImageLink | null => {
-	let _a, _b;
     if (line.match(regexMdGlobal)) {
         const link = line.match(regexParenthesis)?.[1];
         if (link) {
