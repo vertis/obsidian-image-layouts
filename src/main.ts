@@ -113,7 +113,7 @@ type ImageLink = {
 const getImageFromLine = (line: string): ImageLink | null => {
 	let _a, _b;
     if (line.match(regexMdGlobal)) {
-        const link = (_a = line.match(regexParenthesis)) == null ? void 0 : _a[1];
+        const link = line.match(regexParenthesis)?.[1];
         if (link) {
             if (link.toLowerCase().startsWith("http")) {
                 return {
@@ -128,7 +128,7 @@ const getImageFromLine = (line: string): ImageLink | null => {
             }
         }
     } else if (line.match(regexWikiGlobal)) {
-        const link = (_b = line.match(regexWiki)) == null ? void 0 : _b[1];
+        const link = line.match(regexWiki)?.[1];
         if (link) {
             return {
                 type: "local",
