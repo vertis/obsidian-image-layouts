@@ -1,10 +1,10 @@
 {
-	"id": "obsidian-svelte-plugin",
-	"name": "Obsidian Svelte Plugin",
-	"description": "A powerful Obsidian plugin template that provides a solid foundation for kickstarting your Svelte projects with Obsidian.",
-	"author": "Emilio Toledo",
-	"authorUrl": "https://github.com/emilio-toledo",
-	"version": "1.0.0",
+	"id": "obsidian-image-layouts",
+	"name": "Image Layouts",
+	"version": "0.11.0",
 	"minAppVersion": "0.15.0",
+	"description": "Add beautiful image layouts to your notes",
+	"author": "Luke Chadwick",
+	"authorUrl": "https://vertis.io",
 	"isDesktopOnly": false
 }
