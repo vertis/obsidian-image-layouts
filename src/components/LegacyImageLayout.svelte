@@ -2,6 +2,7 @@
   export let layout: "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" = "a";
   export let imageUrls: string[] = [];
   export let requiredImages = 0;
+  export let caption: string = "";
   let displayUrls: string[] = [];
 
   // If the number of imageUrls is less than requiredImages, fill the remaining with "placeholder.jpg"
@@ -24,6 +25,9 @@
     </div>
   {/each}
 </div>
+{#if caption !== ""}
+  <div class="text-center text-xs text-gray-800 mt-2">{caption}</div>
+{/if}
 
 <style>
   .image-layouts-grid {

@@ -1,4 +1,5 @@
 import LayoutComponent from "../components/LegacyImageLayout.svelte";
+import matter from "gray-matter";
 
 import { Plugin, type MarkdownPostProcessorContext } from "obsidian";
 import { getImages, resolveLocalImages } from "../utils/images";
@@ -42,14 +43,15 @@ export function renderLegacyLayoutComponent(
   plugin: Plugin,
   layout: LayoutType
 ) {
-  plugin.app.metadataCache;
-  const images = getImages(source);
+  const m = matter(source);
+  const images = getImages(m.content);
   const readyImages = resolveLocalImages(images, ctx, plugin);
   console.log(readyImages);
   new LayoutComponent({
     target: parent,
     props: {
       // layout,
+      caption: m.data.caption ?? "",
       layout: layout,
       requiredImages: layoutImages[layout],
       imageUrls: readyImages.map((i) => i.link),
