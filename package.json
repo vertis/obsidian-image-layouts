@@ -1,24 +1,30 @@
 {
-	"name": "obsidian-image-layouts",
-	"version": "0.10.0",
-	"description": "Add beautiful image layouts to your notes",
-	"main": "main.js",
-	"scripts": {
-		"dev": "node esbuild.config.mjs",
-		"build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
-		"version": "node version-bump.mjs && git add manifest.json versions.json"
-	},
-	"keywords": [],
-	"author": "",
-	"license": "MIT",
-	"devDependencies": {
-		"@types/node": "^16.11.6",
-		"@typescript-eslint/eslint-plugin": "5.29.0",
-		"@typescript-eslint/parser": "5.29.0",
-		"builtin-modules": "3.3.0",
-		"esbuild": "0.14.47",
-		"obsidian": "latest",
-		"tslib": "2.4.0",
-		"typescript": "4.7.4"
-	}
+  "name": "svelted-obsidian",
+  "private": true,
+  "version": "1.0.0",
+  "main": "main.js",
+  "type": "module",
+  "scripts": {
+    "dev": "vite build --mode development --watch",
+    "build": "vite build --mode production",
+    "check": "svelte-check --tsconfig ./tsconfig.json",
+    "format": "biome format --write ./src",
+    "lint": "biome lint --apply-unsafe ./src"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "1.3.3",
+    "@sveltejs/vite-plugin-svelte": "^2.4.6",
+    "@tsconfig/svelte": "^5.0.2",
+    "@types/node": "^20.8.10",
+    "@unocss/extractor-svelte": "^0.57.2",
+    "builtin-modules": "^3.3.0",
+    "bun-types": "latest",
+    "obsidian": "^1.4.11",
+    "svelte": "^4.2.2",
+    "svelte-check": "^3.5.2",
+    "tslib": "^2.6.2",
+    "typescript": "^5.2.2",
+    "unocss": "^0.57.2",
+    "vite": "^4.5.0"
+  }
 }
