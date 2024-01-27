@@ -14,9 +14,9 @@ dist-ssr
 build
 
 test-vault/.obsidian/workspace.json
-test-vault/.obsidian/plugins/obsidian-svelte-plugin/*.css
-test-vault/.obsidian/plugins/obsidian-svelte-plugin/*.js
-test-vault/.obsidian/plugins/obsidian-svelte-plugin/*.json
+test-vault/.obsidian/plugins/obsidian-image-layouts/*.css
+test-vault/.obsidian/plugins/obsidian-image-layouts/*.js
+test-vault/.obsidian/plugins/obsidian-image-layouts/*.json
 
 # Editor directories and files
 .vscode/*
