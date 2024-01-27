@@ -2,9 +2,10 @@ import { Plugin } from "obsidian";
 import { ExampleView, VIEW_TYPE_EXAMPLE } from "./views/ExampleView";
 import "virtual:uno.css";
 import {
-  addLegacyMarkdownProcessors,
+  addLegacyMarkdownProcessors as addLegacyImageLayoutMarkdownProcessors,
   renderLegacyLayoutComponent,
 } from "./processors/legacy-image-layouts";
+import { addLegacyMasonryMarkdownProcessors } from "./processors/legacy-masory-layouts";
 
 interface ObsidianNoteConnectionsSettings {
   mySetting: string;
@@ -34,7 +35,8 @@ export default class ObsidianNoteConnections extends Plugin {
       this.activateView();
     });
 
-    addLegacyMarkdownProcessors(this);
+    addLegacyImageLayoutMarkdownProcessors(this);
+    addLegacyMasonryMarkdownProcessors(this);
   }
 
   onunload() {
