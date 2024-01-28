@@ -32,7 +32,7 @@
   {/each}
 </div>
 {#if caption !== ""}
-  <div class="text-center text-xs text-gray-800 mt-2">{caption}</div>
+  <div class="text-center text-xs text-gray-800 my-2">{caption}</div>
 {/if}
 
 <style>

@@ -18,8 +18,8 @@ Into ever more complex layouts :
 ---
 caption: Image Layout B
 descriptions:
-  - Something
-  - Another thing
+  - Under Sail
+  - Our spot for the night
 testing: true
 ---
 ![](https://images.unsplash.com/photo-1452065656801-6c60b6e7cbc5?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=3174&q=80)

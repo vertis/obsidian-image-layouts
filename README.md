@@ -14,13 +14,14 @@ The number of images varies depending on the layout. If you don't have enough it
 
 When I find time I'm hoping to add the following:
 
-- Overlay text on images
-- Image captions
+- Overlay text on images [DONE]
+- Image captions [DONE]
 - General gallery to support scrolling through photos
 - Drag and drop support
 - Visually pick empty layouts
 
 ## Documentation
 
-[Legacy Layouts](docs/legacy-layouts.md) - We're moving to a much more capable system, but these are still available. If you used version 0.10.0 or earlier these are the layouts you're probably using. They're still supported and will be for the foreseeable future.
-[Legacy Masonry Layouts](docs/legacy-masonry-layouts.md) - As above, these are the original masonry layouts supported.
+- [Legacy Layouts](docs/legacy-layouts.md) - We're moving to a much more capable system, but these are still available. If you used version 0.10.0 or earlier these are the layouts you're probably using. They're still supported and will be for the foreseeable future.
+- [Legacy Masonry Layouts](docs/legacy-masonry-layouts.md) - As above, these are the original masonry layouts supported.
+- [Overlaying Text and Captions](docs/text.md)
