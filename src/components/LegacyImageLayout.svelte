@@ -1,8 +1,14 @@
 <script lang="ts">
+  // Added dispatcher for button click event
+  import { createEventDispatcher } from "svelte";
+
+  import tooltip from "../utils/tooltip";
   export let layout: "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" = "a";
   export let imageUrls: string[] = [];
   export let requiredImages = 0;
   export let caption: string = "";
+  export let descriptions: string[] = [];
+
   let displayUrls: string[] = [];
 
   // If the number of imageUrls is less than requiredImages, fill the remaining with "placeholder.jpg"
@@ -16,18 +22,31 @@
   } else {
     displayUrls = imageUrls;
   }
+
+  const dispatch = createEventDispatcher();
+
+  // Existing script content...
+
+  function handleButtonClick() {
+    dispatch("buttonClicked", {});
+  }
 </script>
 
-<div class={`image-layouts-grid image-layouts-layout-${layout}`}>
+<div class={`image-layouts-grid image-layouts-layout-${layout} cursor-default`}>
   {#each displayUrls as imageUrl, index (imageUrl)}
     <div class={`image-layouts-image-${index}`}>
-      <img src={imageUrl} alt={`Image ${index + 1}`} />
+      <img
+        src={imageUrl}
+        alt={descriptions[index] ?? `Image ${index + 1}`}
+        use:tooltip
+      />
     </div>
   {/each}
 </div>
 {#if caption !== ""}
   <div class="text-center text-xs text-gray-800 mt-2">{caption}</div>
 {/if}
+<button on:click={handleButtonClick}>Click me</button>
 
 <style>
   .image-layouts-grid {
