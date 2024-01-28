@@ -1,8 +1,8 @@
 <script lang="ts">
   // Added dispatcher for button click event
   import { createEventDispatcher } from "svelte";
+  import LegacyGridImage from "./LegacyGridImage.svelte";
 
-  import tooltip from "../utils/tooltip";
   export let layout: "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" = "a";
   export let imageUrls: string[] = [];
   export let requiredImages = 0;
@@ -34,13 +34,14 @@
 
 <div class={`image-layouts-grid image-layouts-layout-${layout} cursor-default`}>
   {#each displayUrls as imageUrl, index (imageUrl)}
-    <div class={`image-layouts-image-${index}`}>
-      <img
-        src={imageUrl}
-        alt={descriptions[index] ?? `Image ${index + 1}`}
-        use:tooltip
-      />
-    </div>
+    <!-- <div class={`image-layouts-image-${index}`}>
+      <img src={imageUrl} alt={descriptions[index] ?? `Image ${index + 1}`} />
+    </div> -->
+    <LegacyGridImage
+      class={`image-layouts-image-${index}`}
+      src={imageUrl}
+      description={descriptions[index] ?? `Image ${index + 1}`}
+    />
   {/each}
 </div>
 {#if caption !== ""}

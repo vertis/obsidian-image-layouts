@@ -19,6 +19,13 @@ export default defineConfig(({ mode }) => {
       UnoCSS(),
       svelte({ preprocess: vitePreprocess() }) as PluginOption,
     ],
+    css: {
+      preprocessorOptions: {
+        scss: {
+          additionalData: `@import "./src/styles/variables.scss";`,
+        },
+      },
+    },
     build: {
       lib: {
         entry: "src/main",
