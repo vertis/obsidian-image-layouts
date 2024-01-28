@@ -50,8 +50,8 @@ export function renderLegacyLayoutComponent(
   const m = matter(source);
   const images = getImages(m.content);
   const readyImages = resolveLocalImages(images, ctx, plugin);
-  console.log(readyImages);
-  const component = new LayoutComponent({
+
+  const _component = new LayoutComponent({
     target: parent,
     props: {
       // layout,
@@ -61,29 +61,5 @@ export function renderLegacyLayoutComponent(
       requiredImages: layoutImages[layout],
       imageUrls: readyImages.map((i) => i.link),
     },
-  });
-  const res = component.$on("buttonClicked", (event) => {
-    console.log(JSON.stringify(event));
-
-    // view contains the editor to change the markdown
-    const view = plugin.app.workspace.getActiveViewOfType(MarkdownView);
-    // the context contains the begin and end of the block in the markdown file
-    const info = ctx.getSectionInfo(parent);
-
-    if (info) {
-      m.data.testing = true;
-      view?.editor.setSelection(
-        {
-          line: info.lineEnd,
-          ch: 0,
-        },
-        {
-          line: info.lineStart + 1,
-          ch: 0,
-        }
-      );
-      view?.editor.replaceSelection(matter.stringify(m.content, m.data));
-      // Deselect?
-    }
   });
 }
