@@ -1,6 +1,4 @@
 <script lang="ts">
-  // Added dispatcher for button click event
-  import { createEventDispatcher } from "svelte";
   import LegacyGridImage from "./LegacyGridImage.svelte";
 
   export let layout: "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" = "a";
@@ -20,25 +18,14 @@
       ),
     ];
   } else {
-    displayUrls = imageUrls;
-  }
-
-  const dispatch = createEventDispatcher();
-
-  // Existing script content...
-
-  function handleButtonClick() {
-    dispatch("buttonClicked", {});
+    displayUrls = imageUrls.slice(0, requiredImages);
   }
 </script>
 
 <div class={`image-layouts-grid image-layouts-layout-${layout} cursor-default`}>
   {#each displayUrls as imageUrl, index (imageUrl)}
-    <!-- <div class={`image-layouts-image-${index}`}>
-      <img src={imageUrl} alt={descriptions[index] ?? `Image ${index + 1}`} />
-    </div> -->
     <LegacyGridImage
-      class={`image-layouts-image-${index}`}
+      {index}
       src={imageUrl}
       description={descriptions[index] ?? `Image ${index + 1}`}
     />
@@ -47,48 +34,11 @@
 {#if caption !== ""}
   <div class="text-center text-xs text-gray-800 mt-2">{caption}</div>
 {/if}
-<button on:click={handleButtonClick}>Click me</button>
 
 <style>
   .image-layouts-grid {
     display: grid;
     grid-gap: 0.5rem;
-  }
-
-  .image-layouts-grid > div {
-    display: flex;
-    overflow: hidden;
-  }
-
-  .image-layouts-grid > div > img {
-    width: 100%;
-    /* aspect-ratio: calc(4 / 3); */
-    object-fit: cover;
-  }
-
-  /* .image-layouts-grid-area-feature {
-	grid-area: feature;
-} */
-  .image-layouts-image-0 {
-    grid-area: image-0;
-  }
-  .image-layouts-image-1 {
-    grid-area: image-1;
-  }
-  .image-layouts-image-2 {
-    grid-area: image-2;
-  }
-  .image-layouts-image-3 {
-    grid-area: image-3;
-  }
-  .image-layouts-image-4 {
-    grid-area: image-4;
-  }
-  .image-layouts-image-5 {
-    grid-area: image-5;
-  }
-  .image-layouts-image-6 {
-    grid-area: image-6;
   }
 
   .image-layouts-layout-a {
