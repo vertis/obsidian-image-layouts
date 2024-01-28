@@ -87,18 +87,3 @@ export function renderLegacyLayoutComponent(
     }
   });
 }
-
-// let line = view?.editor.getLine(lineno).split(",");
-// line[j] = ev.currentTarget.value;
-// view?.editor.setLine(lineno, line?.join(","));
-
-// view?.editor.setSelection(
-//   {
-//     line: info.lineStart,
-//     ch: 0,
-//   },
-//   {
-//     line: info.lineStart,
-//     ch: 0,
-//   }
-// );
