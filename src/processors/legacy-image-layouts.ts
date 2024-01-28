@@ -6,6 +6,7 @@ import {
   Plugin,
   type MarkdownPostProcessorContext,
 } from "obsidian";
+import { layoutImages, type LayoutType } from "../interfaces";
 import { getImages } from "../utils/images";
 import { resolveLocalImages } from "../utils/image-resolver";
 import type ImageLayoutsPlugin from "../main";
