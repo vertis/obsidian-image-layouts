@@ -6,7 +6,8 @@ import {
   Plugin,
   type MarkdownPostProcessorContext,
 } from "obsidian";
-import { getImages, resolveLocalImages } from "../utils/images";
+import { getImages } from "../utils/images";
+import { resolveLocalImages } from "../utils/image-resolver";
 
 type LayoutType = "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i";
 const layoutImages: Record<LayoutType, number> = {
