@@ -1,6 +1,7 @@
 import LegacyMasonryLayout from "../components/LegacyMasonryLayout.svelte";
 import { Plugin, type MarkdownPostProcessorContext } from "obsidian";
-import { getImages, resolveLocalImages } from "../utils/images";
+import { getImages } from "../utils/images";
+import { resolveLocalImages } from "../utils/image-resolver";
 
 export function addLegacyMasonryMarkdownProcessors(plugin: Plugin) {
   for (let columns = 2; columns <= 6; columns++) {

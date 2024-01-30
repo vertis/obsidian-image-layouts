@@ -60,5 +60,15 @@ export default defineConfig(({ mode }) => {
       emptyOutDir: false,
       sourcemap: "inline",
     },
+    test: {
+      // environment: "jsdom",
+      coverage: {
+        reporter: ["text", "json", "html"],
+      },
+      threads: false, // suppresses errors from canvas when starting tests
+      deps: {
+        inline: ["obsidian"],
+      },
+    },
   };
 });
