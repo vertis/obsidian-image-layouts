@@ -1,5 +1,6 @@
 import LegacyLayoutComponent from "../components/LegacyImageLayout.svelte";
-import SliderComponent from "../components/Slider.svelte";
+import CarouselComponent from "../components/Carousel.svelte";
+import LayoutPickerComponent from "../components/LayoutPicker.svelte";
 
 import matter from "gray-matter";
 
@@ -9,6 +10,8 @@ import {
   type MarkdownPostProcessorContext,
 } from "obsidian";
 import { getImages, resolveLocalImages } from "../utils/images";
+import Carousel from "../components/Carousel.svelte";
+import { layoutImages, type LayoutType } from "../interfaces";
 
 export function addImageLayoutMarkdownProcessor(plugin: Plugin) {
   plugin.registerMarkdownCodeBlockProcessor(
@@ -44,11 +47,67 @@ export function renderImageLayoutComponent(
   //     imageUrls: readyImages.map((i) => i.link),
   //   },
   // });
+  if (!m.data.layout) {
+    const picker = new LayoutPickerComponent({
+      target: parent,
+      props: {
+        layouts: layoutImages,
+      },
+    });
+    picker.$on(
+      "layout-selected",
+      (event: CustomEvent<LayoutType | "carousel">) => {
+        m.data.layout = event.detail;
+        // view contains the editor to change the markdown
+        const view = plugin.app.workspace.getActiveViewOfType(MarkdownView);
+        // the context contains the begin and end of the block in the markdown file
+        const info = ctx.getSectionInfo(parent);
 
-  const slider = new SliderComponent({
-    target: parent,
-    props: {
-      imageUrls: readyImages.map((i) => i.link),
-    },
-  });
+        if (info) {
+          view?.editor.setSelection(
+            {
+              line: info.lineEnd,
+              ch: 0,
+            },
+            {
+              line: info.lineStart + 1,
+              ch: 0,
+            }
+          );
+          view?.editor.replaceSelection(matter.stringify(m.content, m.data));
+          // Deselect?
+        }
+        renderImageLayoutComponent(source, parent, ctx, plugin);
+      }
+    );
+    return;
+  }
+  if (m.data.layout === "carousel") {
+    const _carousel = new CarouselComponent({
+      target: parent,
+      props: {
+        imageUrls: readyImages.map((i) => i.link),
+        showThumbnails: !!m.data.carouselShowThumbnails,
+      },
+    });
+    return;
+  }
+  if (m.data.layout.startsWith("legacy-layout-")) {
+    const layoutType = m.data.layout.charAt(
+      m.data.layout.length - 1
+    ) as LayoutType;
+    if (!layoutImages[layoutType]) {
+      return; // TODO handle bad layout
+    }
+    const _component = new LegacyLayoutComponent({
+      target: parent,
+      props: {
+        caption: m.data.caption ?? "",
+        descriptions: m.data.descriptions,
+        layout: layoutType,
+        requiredImages: layoutImages[layoutType],
+        imageUrls: readyImages.map((i) => i.link),
+      },
+    });
+  }
 }
