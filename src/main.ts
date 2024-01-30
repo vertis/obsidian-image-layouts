@@ -1,9 +1,6 @@
 import { Plugin } from "obsidian";
 import "virtual:uno.css";
-import {
-  addLegacyMarkdownProcessors as addLegacyImageLayoutMarkdownProcessors,
-  renderLegacyLayoutComponent,
-} from "./processors/legacy-image-layouts";
+import { addLegacyMarkdownProcessors as addLegacyImageLayoutMarkdownProcessors } from "./processors/legacy-image-layouts";
 import { addLegacyMasonryMarkdownProcessors } from "./processors/legacy-masory-layouts";
 
 interface ObsidianNoteConnectionsSettings {
