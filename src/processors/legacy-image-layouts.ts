@@ -11,19 +11,6 @@ import { getImages } from "../utils/images";
 import { resolveLocalImages } from "../utils/image-resolver";
 import type ImageLayoutsPlugin from "../main";
 
-type LayoutType = "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i";
-const layoutImages: Record<LayoutType, number> = {
-  a: 2,
-  b: 2,
-  c: 2,
-  d: 3,
-  e: 3,
-  f: 4,
-  g: 4,
-  h: 3,
-  i: 4,
-};
-
 export function addLegacyImageLayoutMarkdownProcessors(
   plugin: ImageLayoutsPlugin
 ) {

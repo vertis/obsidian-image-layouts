@@ -9,9 +9,9 @@ import {
   Plugin,
   type MarkdownPostProcessorContext,
 } from "obsidian";
-import { getImages, resolveLocalImages } from "../utils/images";
-import Carousel from "../components/Carousel.svelte";
+import { getImages } from "../utils/images";
 import { layoutImages, type LayoutType } from "../interfaces";
+import { resolveLocalImages } from "../utils/image-resolver";
 
 export function addImageLayoutMarkdownProcessor(plugin: Plugin) {
   plugin.registerMarkdownCodeBlockProcessor(
@@ -51,7 +51,7 @@ export function renderImageLayoutComponent(
     const picker = new LayoutPickerComponent({
       target: parent,
       props: {
-        layouts: layoutImages,
+        // layouts: layoutImages,
       },
     });
     picker.$on(
@@ -106,7 +106,7 @@ export function renderImageLayoutComponent(
         descriptions: m.data.descriptions,
         layout: layoutType,
         requiredImages: layoutImages[layoutType],
-        imageUrls: readyImages.map((i) => i.link),
+        images: readyImages,
       },
     });
   }
