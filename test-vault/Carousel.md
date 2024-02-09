@@ -18,3 +18,5 @@ carouselShowThumbnails: true
 ```
 
 
+```image-layout
+```

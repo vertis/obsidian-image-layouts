@@ -56,8 +56,12 @@ export function renderImageLayoutComponent(
     });
     picker.$on(
       "layout-selected",
-      (event: CustomEvent<LayoutType | "carousel">) => {
-        m.data.layout = event.detail;
+      (event: CustomEvent<{ type: LayoutType | "carousel"; params?: any }>) => {
+        console.log(event.detail.type);
+        m.data.layout = event.detail.type;
+        if (event.detail.params?.showThumbnails) {
+          m.data.carouselShowThumbnails = true;
+        }
         // view contains the editor to change the markdown
         const view = plugin.app.workspace.getActiveViewOfType(MarkdownView);
         // the context contains the begin and end of the block in the markdown file
@@ -86,7 +90,10 @@ export function renderImageLayoutComponent(
     const _carousel = new CarouselComponent({
       target: parent,
       props: {
-        imageUrls: readyImages.map((i) => i.link),
+        imageUrls:
+          readyImages.length > 0
+            ? readyImages.map((i) => i.link)
+            : ["https://via.placeholder.com/640x480"],
         showThumbnails: !!m.data.carouselShowThumbnails,
       },
     });
