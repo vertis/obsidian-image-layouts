@@ -1,6 +1,11 @@
 <script lang="ts">
+  import LegacyMasonryImage from "./LegacyMasonryImage.svelte";
+
   export let columns: number;
   export let imageUrls: string[] = [];
+  export let caption: string = "";
+  export let descriptions: string[] = [];
+  console.log(imageUrls);
 </script>
 
 <div class={`image-layouts-masonry-grid-${columns}`}>
@@ -8,16 +13,19 @@
     <div class={`image-layouts-masonry-column`}>
       {#each imageUrls as imageUrl, index (imageUrl)}
         {#if index % columns === colIndex}
-          <img
-            class={`image-layouts-masonry-image-${index}`}
+          <LegacyMasonryImage
             src={imageUrl}
-            alt={`Image ${index + 1}`}
+            description={descriptions[index]}
+            {index}
           />
         {/if}
       {/each}
     </div>
   {/each}
 </div>
+{#if caption !== ""}
+  <div class="text-center text-xs text-gray-800 my-2">{caption}</div>
+{/if}
 
 <style>
   .image-layouts-masonry-grid-2 {
