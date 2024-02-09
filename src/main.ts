@@ -2,6 +2,7 @@ import { Plugin } from "obsidian";
 import "virtual:uno.css";
 import { addLegacyImageLayoutMarkdownProcessors } from "./processors/legacy-image-layouts";
 import { addLegacyMasonryMarkdownProcessors } from "./processors/legacy-masory-layouts";
+import { addImageLayoutMarkdownProcessor } from "./processors/image-layout";
 import { settings as s } from "./stores";
 import type { ImageLayoutsSettings } from "./types";
 import { ImageLayoutsSettingsTab } from "./views/settings";
@@ -27,6 +28,7 @@ export default class ImageLayoutsPlugin extends Plugin {
 
     this.addSettingTab(new ImageLayoutsSettingsTab(this.app, this));
 
+    addImageLayoutMarkdownProcessor(this);
     addLegacyImageLayoutMarkdownProcessors(this);
     addLegacyMasonryMarkdownProcessors(this);
   }

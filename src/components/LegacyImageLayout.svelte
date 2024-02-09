@@ -26,7 +26,9 @@
   }
 </script>
 
-<div class={`image-layouts-grid image-layouts-layout-${layout} cursor-default`}>
+<div
+  class={`image-layouts image-layouts-grid image-layouts-layout-${layout} cursor-default`}
+>
   {#each displayImages as image, index (image.link)}
     <LegacyGridImage
       {index}
@@ -39,6 +41,11 @@
 <Caption {caption} />
 
 <style>
+  :global(.image-layouts button) {
+    background-color: unset;
+    box-shadow: unset;
+  }
+
   .image-layouts-grid {
     display: grid;
     grid-gap: 0.5rem;
