@@ -31,7 +31,7 @@ export function renderLegacyMasonryLayoutComponent(
       caption: m.data.caption ?? "",
       descriptions: m.data.descriptions,
       columns: columns,
-      imageUrls: readyImages.map((i) => i.link),
+      images: readyImages,
     },
   });
 }

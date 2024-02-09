@@ -1,33 +1,37 @@
 <script lang="ts">
+  import type { ReadyImageLink } from "../utils/images";
   import LegacyGridImage from "./LegacyGridImage.svelte";
 
   export let layout: "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" = "a";
-  export let imageUrls: string[] = [];
+  export let images: ReadyImageLink[] = [];
   export let requiredImages = 0;
   export let caption: string = "";
   export let descriptions: string[] = [];
 
-  let displayUrls: string[] = [];
+  let displayImages: ReadyImageLink[] = [];
+
+  console.log(images);
 
   // If the number of imageUrls is less than requiredImages, fill the remaining with "placeholder.jpg"
-  if (imageUrls.length < requiredImages) {
-    displayUrls = [
-      ...imageUrls,
-      ...Array(requiredImages - imageUrls.length).fill(
-        "https://via.placeholder.com/640x480"
-      ),
+  if (images.length < requiredImages) {
+    displayImages = [
+      ...images,
+      ...Array(requiredImages - images.length).fill({
+        type: "external",
+        link: "https://via.placeholder.com/640x480",
+      }),
     ];
   } else {
-    displayUrls = imageUrls.slice(0, requiredImages);
+    displayImages = images.slice(0, requiredImages);
   }
 </script>
 
 <div class={`image-layouts-grid image-layouts-layout-${layout} cursor-default`}>
-  {#each displayUrls as imageUrl, index (imageUrl)}
+  {#each displayImages as image, index (image.link)}
     <LegacyGridImage
       {index}
-      src={imageUrl}
-      description={descriptions[index] ?? `Image ${index + 1}`}
+      src={image.link}
+      description={descriptions[index] ?? image.alt ?? `Image ${index + 1}`}
     />
   {/each}
 </div>

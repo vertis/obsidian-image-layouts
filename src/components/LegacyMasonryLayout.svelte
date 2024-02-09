@@ -1,21 +1,21 @@
 <script lang="ts">
+  import type { ReadyImageLink } from "../utils/images";
   import LegacyMasonryImage from "./LegacyMasonryImage.svelte";
 
   export let columns: number;
-  export let imageUrls: string[] = [];
+  export let images: ReadyImageLink[] = [];
   export let caption: string = "";
   export let descriptions: string[] = [];
-  console.log(imageUrls);
 </script>
 
 <div class={`image-layouts-masonry-grid-${columns}`}>
   {#each Array(columns) as _, colIndex}
     <div class={`image-layouts-masonry-column`}>
-      {#each imageUrls as imageUrl, index (imageUrl)}
+      {#each images as image, index (image.link)}
         {#if index % columns === colIndex}
           <LegacyMasonryImage
-            src={imageUrl}
-            description={descriptions[index]}
+            src={image.link}
+            description={descriptions[index] ?? image.alt}
             {index}
           />
         {/if}

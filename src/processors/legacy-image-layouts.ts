@@ -60,7 +60,7 @@ export function renderLegacyLayoutComponent(
       descriptions: m.data.descriptions,
       layout: layout,
       requiredImages: layoutImages[layout],
-      imageUrls: readyImages.map((i) => i.link),
+      images: readyImages,
     },
   });
 }
