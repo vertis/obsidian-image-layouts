@@ -10,7 +10,7 @@ Note: Further examples can be found on the documentation. Masonry 5 and 6 are no
 
 In order to get the image layout use \`\`\` followed by the layout you want e.g. \`\`\`image-layout-a
 
-Images can either be in wikilink format `![[imagename]]` in which case it will load from the local vault, or in `![](url)` format, which will load remotely.
+Images can either be in wikilink format `![[imagename]]` in which case it will load from the local vault, or in `![](url)` format, which will load either the local or remote image as applicable.
 
 The number of images varies depending on the layout. If you don't have enough it will display a placeholder. If you have too many they'll simply be hidden.
 
