@@ -26,11 +26,6 @@ export type WikiImageLink = {
   alt?: string;
 };
 
-// export type PlaceholderImageLink = {
-//   type: "placeholder";
-//   link: string;
-// };
-
 export type ResolvedImageLink = {
   type: "resolved";
   link: string;

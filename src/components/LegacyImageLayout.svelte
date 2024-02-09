@@ -7,6 +7,7 @@
   export let requiredImages = 0;
   export let caption: string = "";
   export let descriptions: string[] = [];
+  export let permanentOverlay = false;
 
   let displayImages: ReadyImageLink[] = [];
 
@@ -32,6 +33,7 @@
       {index}
       src={image.link}
       description={descriptions[index] ?? image.alt ?? `Image ${index + 1}`}
+      {permanentOverlay}
     />
   {/each}
 </div>

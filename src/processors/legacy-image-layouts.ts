@@ -61,6 +61,7 @@ export function renderLegacyLayoutComponent(
       layout: layout,
       requiredImages: layoutImages[layout],
       images: readyImages,
+      permanentOverlay: m.data.permanentOverlay ?? false,
     },
   });
 }
