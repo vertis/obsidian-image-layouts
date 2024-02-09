@@ -32,6 +32,7 @@ export function renderLegacyMasonryLayoutComponent(
       descriptions: m.data.descriptions,
       columns: columns,
       images: readyImages,
+      permanentOverlay: m.data.permanentOverlay ?? false,
     },
   });
 }

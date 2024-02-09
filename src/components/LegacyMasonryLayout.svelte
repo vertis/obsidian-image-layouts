@@ -6,6 +6,7 @@
   export let images: ReadyImageLink[] = [];
   export let caption: string = "";
   export let descriptions: string[] = [];
+  export let permanentOverlay = false;
 </script>
 
 <div class={`image-layouts-masonry-grid-${columns}`}>
@@ -17,6 +18,7 @@
             src={image.link}
             description={descriptions[index] ?? image.alt}
             {index}
+            {permanentOverlay}
           />
         {/if}
       {/each}
