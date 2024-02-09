@@ -2,21 +2,18 @@
 
 This is a new feature in 0.11.0.
 
-It's now possible to overlay text on images, and to add captions to images. This is done using YAML front matter. In the future, we'll add support for this in the UI, but for now, it's manual.
+Captions for images are created using YAML front matter, while text overlays can be achieved in two ways: either by specifying a `descriptions` array in the front matter or by including the text within a markdown image link like `![Some Description](image.jpg)`. Although UI support for these features is planned for future updates, they currently require manual setup.
 
-The overlay shows up when hovering over the image. The caption shows up below the set of images.
-
----
-
-caption: Image Layout B
-descriptions:
-
-- Something
-- Another thing
-
----
+Text overlays appear when hovering over an image, and captions are displayed beneath the image set. It is also possible to make the overlay show up permanently by setting `permanentOverlay: true` in the front matter.
 
 ```
+---
+caption: Image Layout B
+descriptions:
+- Something
+- Another thing
+permanentOverlay: true # the default is false
+---
 
 ![](captions-and-overlay.png)
 ```
