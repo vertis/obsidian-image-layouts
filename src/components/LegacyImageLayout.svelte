@@ -12,8 +12,6 @@
 
   let displayImages: ReadyImageLink[] = [];
 
-  console.log(images);
-
   // If the number of imageUrls is less than requiredImages, fill the remaining with "placeholder.jpg"
   if (images.length < requiredImages) {
     displayImages = [

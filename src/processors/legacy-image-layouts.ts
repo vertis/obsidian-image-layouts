@@ -8,6 +8,7 @@ import {
 } from "obsidian";
 import { getImages } from "../utils/images";
 import { resolveLocalImages } from "../utils/image-resolver";
+import type ImageLayoutsPlugin from "../main";
 
 type LayoutType = "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i";
 const layoutImages: Record<LayoutType, number> = {
@@ -22,7 +23,9 @@ const layoutImages: Record<LayoutType, number> = {
   i: 4,
 };
 
-export function addLegacyMarkdownProcessors(plugin: Plugin) {
+export function addLegacyImageLayoutMarkdownProcessors(
+  plugin: ImageLayoutsPlugin
+) {
   for (const layout in layoutImages) {
     plugin.registerMarkdownCodeBlockProcessor(
       `image-layout-${layout}`,
@@ -45,7 +48,7 @@ export function renderLegacyLayoutComponent(
   source: string,
   parent: HTMLElement,
   ctx: MarkdownPostProcessorContext,
-  plugin: Plugin,
+  plugin: ImageLayoutsPlugin,
   layout: LayoutType
 ) {
   const m = matter(source);
@@ -61,7 +64,8 @@ export function renderLegacyLayoutComponent(
       layout: layout,
       requiredImages: layoutImages[layout],
       images: readyImages,
-      permanentOverlay: m.data.permanentOverlay ?? false,
+      permanentOverlay:
+        m.data.permanentOverlay ?? plugin.settings.shouldOverlayPermanently,
     },
   });
 }
