@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { ReadyImageLink } from "../utils/images";
   import LegacyGridImage from "./LegacyGridImage.svelte";
+  import Caption from "./Caption.svelte";
 
   export let layout: "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" = "a";
   export let images: ReadyImageLink[] = [];
@@ -37,9 +38,7 @@
     />
   {/each}
 </div>
-{#if caption !== ""}
-  <div class="text-center text-xs text-gray-800 my-2">{caption}</div>
-{/if}
+<Caption {caption} />
 
 <style>
   .image-layouts-grid {

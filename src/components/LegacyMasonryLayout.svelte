@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { ReadyImageLink } from "../utils/images";
   import LegacyMasonryImage from "./LegacyMasonryImage.svelte";
+  import Caption from "./Caption.svelte";
 
   export let columns: number;
   export let images: ReadyImageLink[] = [];
@@ -25,9 +26,7 @@
     </div>
   {/each}
 </div>
-{#if caption !== ""}
-  <div class="text-center text-xs text-gray-800 my-2">{caption}</div>
-{/if}
+<Caption {caption} />
 
 <style>
   .image-layouts-masonry-grid-2 {
