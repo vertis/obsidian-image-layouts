@@ -20,6 +20,8 @@ When I find time I'm hoping to add the following:
 
 - Overlay text on images [DONE]
 - Image captions [DONE]
+- Permanent overlays [DONE]
+- Overlays from markdown links [DONE]
 - General gallery to support scrolling through photos
 - Drag and drop support
 - Visually pick empty layouts
