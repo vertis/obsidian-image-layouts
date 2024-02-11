@@ -3,7 +3,6 @@ import { svelte, vitePreprocess } from "@sveltejs/vite-plugin-svelte";
 import builtins from "builtin-modules";
 import UnoCSS from "unocss/vite";
 import { PluginOption, defineConfig } from "vite";
-import nodePolyfills from "rollup-plugin-polyfill-node";
 
 const setOutDir = (mode: string) => {
   switch (mode) {
@@ -17,7 +16,6 @@ const setOutDir = (mode: string) => {
 export default defineConfig(({ mode }) => {
   return {
     plugins: [
-      nodePolyfills(),
       UnoCSS(),
       svelte({ preprocess: vitePreprocess() }) as PluginOption,
     ],
