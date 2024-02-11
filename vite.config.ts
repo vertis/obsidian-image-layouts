@@ -3,7 +3,6 @@ import { svelte, vitePreprocess } from "@sveltejs/vite-plugin-svelte";
 import builtins from "builtin-modules";
 import UnoCSS from "unocss/vite";
 import { PluginOption, defineConfig } from "vite";
-import { NodeGlobalsPolyfillPlugin } from "@esbuild-plugins/node-globals-polyfill";
 
 const setOutDir = (mode: string) => {
   switch (mode) {
@@ -25,20 +24,6 @@ export default defineConfig(({ mode }) => {
         scss: {
           additionalData: `@import "./src/styles/variables.scss";`,
         },
-      },
-    },
-    optimizeDeps: {
-      esbuildOptions: {
-        // Node.js global to browser globalThis
-        define: {
-          global: "globalThis",
-        },
-        // Enable esbuild polyfill plugins
-        plugins: [
-          NodeGlobalsPolyfillPlugin({
-            buffer: true,
-          }),
-        ],
       },
     },
     build: {
