@@ -29,6 +29,7 @@
     "vitest": "^1.2.2"
   },
   "dependencies": {
+    "@esbuild-plugins/node-globals-polyfill": "^0.2.3",
     "gray-matter": "^4.0.3"
   }
 }
