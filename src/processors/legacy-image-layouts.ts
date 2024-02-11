@@ -1,15 +1,10 @@
 import LayoutComponent from "../components/LegacyImageLayout.svelte";
-import matter from "gray-matter";
-
-import {
-  MarkdownView,
-  Plugin,
-  type MarkdownPostProcessorContext,
-} from "obsidian";
+import { type MarkdownPostProcessorContext } from "obsidian";
 import { layoutImages, type LayoutType } from "../interfaces";
 import { getImages } from "../utils/images";
 import { resolveLocalImages } from "../utils/image-resolver";
 import type ImageLayoutsPlugin from "../main";
+import { parseFrontMatterBlock } from "../utils/front-matter";
 
 export function addLegacyImageLayoutMarkdownProcessors(
   plugin: ImageLayoutsPlugin
@@ -39,21 +34,25 @@ export function renderLegacyLayoutComponent(
   plugin: ImageLayoutsPlugin,
   layout: LayoutType
 ) {
-  const m = matter(source);
-  const images = getImages(m.content);
+  const m = parseFrontMatterBlock<{
+    caption?: string;
+    descriptions?: string[];
+    permanentOverlay?: boolean;
+  }>(source);
+  const images = getImages(m.body);
   const readyImages = resolveLocalImages(images, ctx, plugin);
 
   const _component = new LayoutComponent({
     target: parent,
     props: {
       // layout,
-      caption: m.data.caption ?? "",
-      descriptions: m.data.descriptions,
+      caption: m.data?.caption ?? "",
+      descriptions: m.data?.descriptions,
       layout: layout,
       requiredImages: layoutImages[layout],
       images: readyImages,
       permanentOverlay:
-        m.data.permanentOverlay ?? plugin.settings.shouldOverlayPermanently,
+        m.data?.permanentOverlay ?? plugin.settings.shouldOverlayPermanently,
     },
   });
 }
