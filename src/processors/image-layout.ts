@@ -12,8 +12,10 @@ import {
 import { getImages } from "../utils/images";
 import { layoutImages, type LayoutType } from "../interfaces";
 import { resolveLocalImages } from "../utils/image-resolver";
+import { parseFrontMatterBlock } from "../utils/front-matter";
+import type ImageLayoutsPlugin from "../main";
 
-export function addImageLayoutMarkdownProcessor(plugin: Plugin) {
+export function addImageLayoutMarkdownProcessor(plugin: ImageLayoutsPlugin) {
   plugin.registerMarkdownCodeBlockProcessor(
     "image-layout",
     (source, el, ctx) => {
@@ -28,10 +30,16 @@ export function renderImageLayoutComponent(
   source: string,
   parent: HTMLElement,
   ctx: MarkdownPostProcessorContext,
-  plugin: Plugin
+  plugin: ImageLayoutsPlugin
 ) {
-  const m = matter(source);
-  const images = getImages(m.content);
+  const m = parseFrontMatterBlock<{
+    layout?: LayoutType | "carousel";
+    carouselShowThumbnails?: boolean;
+    caption?: string;
+    descriptions?: string[];
+    permanentOverlay?: boolean;
+  }>(source);
+  const images = getImages(m.body);
   const readyImages = resolveLocalImages(images, ctx, plugin);
 
   // const layout = "b" as LayoutType; // Soon we will show a picker if it isn't in the yaml
@@ -47,7 +55,7 @@ export function renderImageLayoutComponent(
   //     imageUrls: readyImages.map((i) => i.link),
   //   },
   // });
-  if (!m.data.layout) {
+  if (!m.data?.layout) {
     const picker = new LayoutPickerComponent({
       target: parent,
       props: {
@@ -57,10 +65,11 @@ export function renderImageLayoutComponent(
     picker.$on(
       "layout-selected",
       (event: CustomEvent<{ type: LayoutType | "carousel"; params?: any }>) => {
+        const newData = m.data ?? {};
         console.log(event.detail.type);
-        m.data.layout = event.detail.type;
+        newData.layout = event.detail.type;
         if (event.detail.params?.showThumbnails) {
-          m.data.carouselShowThumbnails = true;
+          newData.carouselShowThumbnails = true;
         }
         // view contains the editor to change the markdown
         const view = plugin.app.workspace.getActiveViewOfType(MarkdownView);
@@ -78,7 +87,7 @@ export function renderImageLayoutComponent(
               ch: 0,
             }
           );
-          view?.editor.replaceSelection(matter.stringify(m.content, m.data));
+          view?.editor.replaceSelection(matter.stringify(m.body, newData));
           // Deselect?
         }
         renderImageLayoutComponent(source, parent, ctx, plugin);
@@ -114,6 +123,8 @@ export function renderImageLayoutComponent(
         layout: layoutType,
         requiredImages: layoutImages[layoutType],
         images: readyImages,
+        permanentOverlay:
+          m.data?.permanentOverlay ?? plugin.settings.shouldOverlayPermanently,
       },
     });
   }
