@@ -7,11 +7,6 @@ import { settings as s } from "./stores";
 import type { ImageLayoutsSettings } from "./types";
 import { ImageLayoutsSettingsTab } from "./views/settings";
 
-// https://github.com/vitejs/vite/discussions/2785
-import { Buffer as BufferPolyfill } from "buffer";
-declare const Buffer: typeof BufferPolyfill;
-globalThis.Buffer = BufferPolyfill;
-
 const DEFAULT_SETTINGS: ImageLayoutsSettings = {
   shouldOverlayPermanently: false,
 };
