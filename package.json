@@ -29,7 +29,7 @@
     "vitest": "^1.2.2"
   },
   "dependencies": {
-    "buffer": "^6.0.3",
-    "gray-matter": "^4.0.3"
+    "gray-matter": "^4.0.3",
+    "rollup-plugin-polyfill-node": "^0.13.0"
   }
 }
