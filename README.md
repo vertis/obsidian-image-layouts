@@ -1,6 +1,6 @@
 # Obsidian Image Layouts
 
-![GitHub Downloads"](https://img.shields.io/github/downloads/vertis/obsidian-image-layouts/total?color=573E7A)
+![GitHub Downloads"](https://img.shields.io/github/downloads/vertis/obsidian-image-layouts/total?color=573E7A&logo=github)
 [![GitHub release](https://img.shields.io/github/release/vertis/obsidian-image-layouts.svg)](https://GitHub.com/vertis/obsidian-image-layouts/releases/)
 [![GitHub license](https://img.shields.io/github/license/vertis/obsidian-image-layouts.svg)](https://github.com/vertis/obsidian-image-layouts/blob/main/LICENSE)
 [![Known Vulnerabilities](https://snyk.io/test/github/vertis/obsidian-image-layouts/badge.svg?targetFile=package.json&style=flat-square)](https://snyk.io/test/github/vertis/obsidian-image-layouts?targetFile=package.json)
