@@ -1,5 +1,12 @@
 # Obsidian Image Layouts
 
+![GitHub Downloads"](https://img.shields.io/github/downloads/vertis/obsidian-image-layouts/total?color=573E7A)
+[![GitHub release](https://img.shields.io/github/release/vertis/obsidian-image-layouts.svg)](https://GitHub.com/vertis/obsidian-image-layouts/releases/)
+[![GitHub license](https://img.shields.io/github/license/vertis/obsidian-image-layouts.svg)](https://github.com/vertis/obsidian-image-layouts/blob/main/LICENSE)
+[![Known Vulnerabilities](https://snyk.io/test/github/vertis/obsidian-image-layouts/badge.svg?targetFile=package.json&style=flat-square)](https://snyk.io/test/github/vertis/obsidian-image-layouts?targetFile=package.json)
+[![GitHub Issues](https://img.shields.io/github/issues/vertis/obsidian-image-layouts.svg)](https://github.com/vertis/obsidian-image-layouts/issues)
+![Contributions welcome](https://img.shields.io/badge/contributions-welcome-orange.svg)
+
 I wanted a way to lay images out inside obsidian notes in a `beautiful` way. This is my first attempt at that. It's a bit rough around the edges, because it's still quite new, but I hope that it's useful in displaying image heavy notes. I wanted the ability to visually tell stories, and this is a good first step.
 
 ![](docs/layout-icons.png)
