@@ -94,3 +94,13 @@ permanentOverlay: true
 ![](https://images.unsplash.com/photo-1522043436628-a4bd7867030b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTJ8fHdpbnRlcnxlbnwwfDF8MHx8&auto=format&fit=crop&w=900&q=60)
 ```
 
+`image-layout-single`
+
+```image-layout-single
+---
+caption: Images#^fig-TCRv1_rie 
+permanentOverlay: false # the default is false
+---
+
+![](https://images.unsplash.com/photo-1543726969-a1da85a6d334?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=3636&q=80)
+```
