@@ -1,4 +1,14 @@
-export type LayoutType = "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i";
+export type LayoutType =
+  | "a"
+  | "b"
+  | "c"
+  | "d"
+  | "e"
+  | "f"
+  | "g"
+  | "h"
+  | "i"
+  | "single";
 export const layoutImages: Record<LayoutType, number> = {
   a: 2,
   b: 2,
@@ -9,4 +19,5 @@ export const layoutImages: Record<LayoutType, number> = {
   g: 4,
   h: 3,
   i: 4,
+  single: 1,
 };

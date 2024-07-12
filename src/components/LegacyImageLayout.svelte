@@ -3,7 +3,7 @@
   import LegacyGridImage from "./LegacyGridImage.svelte";
   import Caption from "./Caption.svelte";
 
-  export let layout: "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" = "a";
+  export let layout: "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" | "single" = "a";
   export let images: ReadyImageLink[] = [];
   export let requiredImages = 0;
   export let caption: string = "";
@@ -104,5 +104,10 @@
   .image-layouts-layout-i {
     grid-template-columns: 1fr 1fr 1fr 1fr;
     grid-template-areas: "image-0 image-1 image-2 image-3";
+  }
+
+  .image-layouts-layout-single {
+    grid-template-columns: 1fr;
+    grid-template-areas: "image-0";
   }
 </style>
