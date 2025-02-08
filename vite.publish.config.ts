@@ -10,11 +10,7 @@ export default defineConfig({
     outDir: "test-vault",
     emptyOutDir: false,
     rollupOptions: {
-      external: ["document", "window", "HTMLElement"],
+      external: ["publish", "document", "window", "HTMLElement"],
     },
-  },
-  define: {
-    Buffer: ["{}", "Buffer"],
-    "process.env.NODE_DEBUG": "false",
   },
 });
