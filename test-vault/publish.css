@@ -1,0 +1,75 @@
+/* Basic styling for image layouts */
+.image-layout {
+  margin: 2rem 0;
+}
+
+/* Carousel Layout */
+.image-layout-carousel {
+  position: relative;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.image-layout-carousel .carousel-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.image-layout-carousel .carousel-slides {
+  display: flex;
+  transition: transform 0.3s ease-in-out;
+}
+
+.image-layout-carousel .carousel-slide {
+  flex: 0 0 100%;
+  width: 100%;
+}
+
+.image-layout-carousel img {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+/* Carousel Navigation */
+.image-layout-carousel .carousel-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 1rem;
+}
+
+.image-layout-carousel .carousel-button {
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+/* Thumbnails */
+.image-layout-carousel .carousel-thumbnails {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  overflow-x: auto;
+  padding: 0.5rem;
+}
+
+.image-layout-carousel .carousel-thumbnail {
+  width: 80px;
+  height: 60px;
+  object-fit: cover;
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+
+.image-layout-carousel .carousel-thumbnail.active {
+  opacity: 1;
+} 
