@@ -3,7 +3,7 @@
 // "obsidian" throws at load time and the plugin silently never enables (#20).
 import { readFileSync } from "node:fs";
 
-const ALLOWED = new Set(["obsidian", "electron"]);
+const ALLOWED = new Set(["obsidian"]);
 
 const bundle = readFileSync(new URL("../build/main.js", import.meta.url), "utf8");
 const requires = [...bundle.matchAll(/require\(["']([^"')]+)["']\)/g)].map(

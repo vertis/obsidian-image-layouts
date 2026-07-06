@@ -6,7 +6,7 @@ import {
 
 test("stringifyFrontMatterBlock output shape matches what the picker writes back", () => {
   const out = stringifyFrontMatterBlock("![[img.jpg]]\n", { layout: "a" });
-  expect(out).toBe('---\nlayout: "a"\n---\n![[img.jpg]]\n');
+  expect(out).toBe("---\nlayout: a\n---\n![[img.jpg]]\n");
 });
 
 test("stringifyFrontMatterBlock appends a trailing newline to the body", () => {
@@ -35,5 +35,29 @@ test("stringifyFrontMatterBlock skips undefined values", () => {
     layout: "carousel",
     carouselShowThumbnails: undefined,
   });
-  expect(out).toBe('---\nlayout: "carousel"\n---\n');
+  expect(out).toBe("---\nlayout: carousel\n---\n");
+});
+
+test("parseFrontMatterBlock keeps the raw content as body when YAML is invalid", () => {
+  const content = "---\n: bad: [yaml\n---\n![[keep-me.jpg]]\n";
+  const parsed = parseFrontMatterBlock(content);
+  expect(parsed.error).toBeDefined();
+  expect(parsed.data).toBeNull();
+  expect(parsed.body).toBe(content);
+});
+
+test("stringifyFrontMatterBlock writes simple identifiers bare", () => {
+  const out = stringifyFrontMatterBlock("![[img.jpg]]\n", {
+    layout: "carousel",
+    carouselShowThumbnails: true,
+  });
+  expect(out).toBe(
+    "---\nlayout: carousel\ncarouselShowThumbnails: true\n---\n![[img.jpg]]\n",
+  );
+});
+
+test("stringifyFrontMatterBlock quotes YAML-reserved words and complex strings", () => {
+  const out = stringifyFrontMatterBlock("", { a: "true", b: "has space:", c: "no" });
+  const parsed = parseFrontMatterBlock<{ a: string; b: string; c: string }>(out);
+  expect(parsed.data).toEqual({ a: "true", b: "has space:", c: "no" });
 });

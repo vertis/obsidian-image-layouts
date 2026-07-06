@@ -144,3 +144,25 @@ test("safeDecode decodes percent-encoding and tolerates stray percents", () => {
   expect(safeDecode("Test%20folder/image.jpg")).toBe("Test folder/image.jpg");
   expect(safeDecode("100% done.jpg")).toBe("100% done.jpg");
 });
+
+test("getImageFromLine with parentheses in alt text does not hijack the link", () => {
+  const line = "![Sunset (Hawaii)](sunset.jpg)";
+  const result = getImageFromLine(line);
+  expect(result).toEqual({
+    type: "wiki",
+    link: "sunset.jpg",
+    alt: "Sunset (Hawaii)",
+  });
+});
+
+test("getImageFromLine with parentheses in the filename", () => {
+  const result = getImageFromLine("![](Screenshot%20(1).png)");
+  expect(result).toEqual({
+    type: "wiki",
+    link: "Screenshot%20(1).png",
+  });
+  expect(getImageFromLine("![](Pasted image (1).png)")).toEqual({
+    type: "wiki",
+    link: "Pasted image (1).png",
+  });
+});

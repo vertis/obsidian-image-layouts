@@ -1,9 +1,10 @@
 // Borrowed from https://github.com/agathauy/wikilinks-to-mdlinks-obsidian
 const regexWiki = /\[\[([^\]]+)\]\]/;
-const regexParenthesis = /\((.*?)\)/;
-const regexBrackets = /\[(.*?)\]/;
+// Alt and destination extracted together so parentheses elsewhere on the
+// line can't hijack the link; the destination allows one level of nested
+// parens for filenames like "Screenshot (1).png".
+const regexMd = /\[([^\]]*)\]\(([^()]*(?:\([^()]*\)[^()]*)*)\)/;
 const regexWikiGlobal = /\[\[([^\]]*)\]\]/g;
-const regexMdGlobal = /\[([^\]]*)\]\(([^(]*)\)/g;
 
 export type ExternalImageLink = {
   type: "external";
@@ -75,9 +76,10 @@ export const safeDecode = (link: string): string => {
 };
 
 export const getImageFromLine = (line: string): ImageLink | null => {
-  if (line.match(regexMdGlobal)) {
-    const link = line.match(regexParenthesis)?.[1];
-    const altRaw = line.match(regexBrackets)?.[1] ?? "";
+  const mdMatch = line.match(regexMd);
+  if (mdMatch) {
+    const altRaw = mdMatch[1] ?? "";
+    const link = mdMatch[2];
     if (link) {
       const attributes = parsePipeSegments(altRaw.split("|"));
       if (link.toLowerCase().startsWith("http")) {

@@ -9,6 +9,7 @@ import {
 import type ImageLayoutsPlugin from "../main";
 import { collectBlockImages } from "../utils/block-images";
 import { parseFrontMatterBlock } from "../utils/front-matter";
+import { normalizeAlign, normalizeDescriptions } from "../utils/options";
 import { resolveOverlayMode } from "../utils/overlay";
 import { resolvePlaceholderImage } from "../utils/placeholder";
 import { SvelteRenderChild } from "../utils/svelte-render-child";
@@ -69,13 +70,13 @@ export function renderLegacyLayoutComponent(
     target: parent,
     props: {
       caption: m.data?.caption ?? "",
-      descriptions: m.data?.descriptions,
+      descriptions: normalizeDescriptions(m.data?.descriptions),
       layout: layout,
       requiredImages: layoutImages[layout],
       images: readyImages,
       overlayMode: resolveOverlayMode(m.data, plugin.settings),
       fit: m.data?.fit,
-      align: m.data?.align ?? defaultAlign,
+      align: normalizeAlign(m.data?.align, defaultAlign),
       width: m.data?.width,
       placeholderUrl: resolvePlaceholderImage(plugin),
     },

@@ -10,7 +10,7 @@
   export let images: ReadyImageLink[] = [];
   export let showThumbnails: boolean = false;
   export let caption: string = "";
-  export let descriptions: string[] = [];
+  export let descriptions: (string | undefined)[] = [];
   export let background: string = "var(--background-secondary)";
   export let height: number | string = "24rem";
 
