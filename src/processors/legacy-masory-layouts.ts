@@ -4,6 +4,7 @@ import type { LayoutBlockOptions } from "../interfaces";
 import type ImageLayoutsPlugin from "../main";
 import { collectBlockImages } from "../utils/block-images";
 import { parseFrontMatterBlock } from "../utils/front-matter";
+import { normalizeDescriptions } from "../utils/options";
 import { resolveOverlayMode } from "../utils/overlay";
 import { SvelteRenderChild } from "../utils/svelte-render-child";
 
@@ -31,7 +32,7 @@ export function renderLegacyMasonryLayoutComponent(
     target: parent,
     props: {
       caption: m.data?.caption ?? "",
-      descriptions: m.data?.descriptions,
+      descriptions: normalizeDescriptions(m.data?.descriptions),
       columns: columns,
       images: readyImages,
       overlayMode: resolveOverlayMode(m.data, plugin.settings),

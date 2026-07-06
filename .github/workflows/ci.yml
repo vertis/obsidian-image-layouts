@@ -22,6 +22,8 @@ jobs:
         run: bun run test
       - name: Build
         run: bun run build
+      - name: Bundle guard (no Node built-ins — breaks Obsidian mobile)
+        run: bun run check:bundle
       - name: Upload plugin build
         uses: actions/upload-artifact@v4
         with:

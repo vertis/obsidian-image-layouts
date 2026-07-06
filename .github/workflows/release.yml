@@ -19,6 +19,14 @@ jobs:
       - uses: oven-sh/setup-bun@v2
       - name: Install dependencies
         run: bun install --frozen-lockfile
+      - name: Validate tag matches manifest version
+        run: |
+          tag="${GITHUB_REF#refs/tags/}"
+          version=$(bun -e "console.log(JSON.parse(require('fs').readFileSync('manifest.json', 'utf8')).version)")
+          if [ "$tag" != "$version" ]; then
+            echo "Tag $tag does not match manifest.json version $version" >&2
+            exit 1
+          fi
       - name: Verify
         run: bun run verify
       - name: Create release

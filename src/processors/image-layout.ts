@@ -14,6 +14,7 @@ import {
   parseFrontMatterBlock,
   stringifyFrontMatterBlock,
 } from "../utils/front-matter";
+import { normalizeAlign, normalizeDescriptions } from "../utils/options";
 import { resolveOverlayMode } from "../utils/overlay";
 import { resolvePlaceholderImage } from "../utils/placeholder";
 import { SvelteRenderChild } from "../utils/svelte-render-child";
@@ -37,8 +38,11 @@ export function renderImageLayoutComponent(
 ) {
   const m = parseFrontMatterBlock<ImageLayoutBlockOptions>(source);
   const readyImages = collectBlockImages(m.data, m.body, ctx, plugin);
+  const descriptions = normalizeDescriptions(m.data?.descriptions);
 
-  if (!m.data?.layout) {
+  // A non-string layout value (e.g. `layout: 1`) is treated as unset.
+  const layout = typeof m.data?.layout === "string" ? m.data.layout : undefined;
+  if (!m.data || !layout) {
     const picker = new LayoutPickerComponent({
       target: parent,
       props: {},
@@ -83,7 +87,7 @@ export function renderImageLayoutComponent(
     );
     return;
   }
-  if (m.data.layout === "carousel") {
+  if (layout === "carousel") {
     const carousel = new CarouselComponent({
       target: parent,
       props: {
@@ -93,7 +97,7 @@ export function renderImageLayoutComponent(
             : [{ type: "external", link: resolvePlaceholderImage(plugin) }],
         showThumbnails: !!m.data.carouselShowThumbnails,
         caption: m.data.caption ?? "",
-        descriptions: m.data.descriptions,
+        descriptions,
         background: m.data.carouselBackground,
         height: m.data.carouselHeight,
       },
@@ -103,22 +107,22 @@ export function renderImageLayoutComponent(
   }
   // Accept both `layout: legacy-layout-a` and plain `layout: a`. Slicing the
   // prefix (rather than taking the last character) keeps `single` working.
-  const layoutName = m.data.layout.startsWith(LEGACY_LAYOUT_PREFIX)
-    ? m.data.layout.slice(LEGACY_LAYOUT_PREFIX.length)
-    : m.data.layout;
+  const layoutName = layout.startsWith(LEGACY_LAYOUT_PREFIX)
+    ? layout.slice(LEGACY_LAYOUT_PREFIX.length)
+    : layout;
   if (layoutImages[layoutName as LayoutType]) {
     const layoutType = layoutName as LayoutType;
     const component = new LegacyLayoutComponent({
       target: parent,
       props: {
         caption: m.data.caption ?? "",
-        descriptions: m.data.descriptions,
+        descriptions,
         layout: layoutType,
         requiredImages: layoutImages[layoutType],
         images: readyImages,
         overlayMode: resolveOverlayMode(m.data, plugin.settings),
         fit: m.data.fit,
-        align: m.data.align,
+        align: normalizeAlign(m.data.align),
         width: m.data.width,
         placeholderUrl: resolvePlaceholderImage(plugin),
       },

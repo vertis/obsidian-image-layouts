@@ -7,7 +7,7 @@
   export let columns: number;
   export let images: ReadyImageLink[] = [];
   export let caption: string = "";
-  export let descriptions: string[] = [];
+  export let descriptions: (string | undefined)[] = [];
   export let overlayMode: OverlayMode = "hover";
 </script>
 
