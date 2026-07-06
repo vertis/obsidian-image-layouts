@@ -1,10 +1,20 @@
 # Overlaying Text and Captions
 
-This is a new feature in 0.11.0.
+Captions for the whole layout are created using YAML front matter (inside the
+` ``` `). Per-image text overlays can be added in three ways:
 
-Captions for images are created using YAML front matter (inside the ` ``` `), while text overlays can be achieved in two ways: either by specifying a `descriptions` array in the front matter or by including the text within a markdown image link like `![Some Description](image.jpg)`. Although UI support for these features is planned for future updates, they currently require manual setup.
+- a caption in a wikilink: `![[image.jpg|Some Description]]`
+- alt text in a markdown image link: `![Some Description](image.jpg)`
+- a `descriptions` array in the front matter (overrides the above)
 
-Text overlays appear when hovering over an image, and captions are displayed beneath the image set. It is also possible to make the overlay show up permanently by setting `permanentOverlay: true` in the front matter.
+Text overlays appear when hovering over an image and captions are displayed
+beneath the image set. The overlay behaviour can be changed per block with
+`overlay: never`, `overlay: hover` or `overlay: always` (the global default
+lives in the plugin settings). The older `permanentOverlay: true` is still
+supported and means `overlay: always`.
+
+Images without a caption no longer show an automatic "Image 1", "Image 2"
+overlay.
 
 ````
 ```image-layout-b
@@ -13,7 +23,7 @@ caption: Image Layout B
 descriptions:
 - Sunset on the sea
 - Our spot for the night
-permanentOverlay: true # the default is false
+overlay: always # the default is hover
 ---
 
 ![](sunset-sailing.png)
