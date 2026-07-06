@@ -1,9 +1,11 @@
-import { type MarkdownPostProcessorContext } from "obsidian";
+import type { MarkdownPostProcessorContext } from "obsidian";
 import LegacyMasonryLayout from "../components/LegacyMasonryLayout.svelte";
+import type { LayoutBlockOptions } from "../interfaces";
 import type ImageLayoutsPlugin from "../main";
+import { collectBlockImages } from "../utils/block-images";
 import { parseFrontMatterBlock } from "../utils/front-matter";
-import { resolveLocalImages } from "../utils/image-resolver";
-import { getImages } from "../utils/images";
+import { resolveOverlayMode } from "../utils/overlay";
+import { SvelteRenderChild } from "../utils/svelte-render-child";
 
 export function addLegacyMasonryMarkdownProcessors(plugin: ImageLayoutsPlugin) {
   for (let columns = 2; columns <= 6; columns++) {
@@ -23,22 +25,17 @@ export function renderLegacyMasonryLayoutComponent(
   plugin: ImageLayoutsPlugin,
   columns: number,
 ) {
-  const m = parseFrontMatterBlock<{
-    caption?: string;
-    descriptions?: string[];
-    permanentOverlay?: boolean;
-  }>(source);
-  const images = getImages(m.body);
-  const readyImages = resolveLocalImages(images, ctx, plugin);
-  new LegacyMasonryLayout({
+  const m = parseFrontMatterBlock<LayoutBlockOptions>(source);
+  const readyImages = collectBlockImages(m.data, m.body, ctx, plugin);
+  const component = new LegacyMasonryLayout({
     target: parent,
     props: {
       caption: m.data?.caption ?? "",
       descriptions: m.data?.descriptions,
       columns: columns,
       images: readyImages,
-      permanentOverlay:
-        m.data?.permanentOverlay ?? plugin.settings.shouldOverlayPermanently,
+      overlayMode: resolveOverlayMode(m.data, plugin.settings),
     },
   });
+  ctx.addChild(new SvelteRenderChild(parent, component));
 }

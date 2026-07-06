@@ -15,3 +15,20 @@ export const parseFrontMatterBlock = <T>(
     return { data: null, body: "", error: error as Error };
   }
 };
+
+// Serializes a frontmatter block without gray-matter, whose top-level
+// require("fs") made the bundle throw on Obsidian mobile (#20). YAML is a
+// superset of JSON, so JSON-encoding each value always emits valid YAML that
+// parseFrontMatterBlock reads back unchanged.
+export const stringifyFrontMatterBlock = (
+  body: string,
+  data: Record<string, unknown>,
+): string => {
+  const yaml = Object.entries(data)
+    .filter(([, value]) => value !== undefined)
+    .map(([key, value]) => `${key}: ${JSON.stringify(value)}`)
+    .join("\n");
+  const normalizedBody =
+    body === "" || body.endsWith("\n") ? body : `${body}\n`;
+  return `---\n${yaml}\n---\n${normalizedBody}`;
+};

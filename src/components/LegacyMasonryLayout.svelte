@@ -1,25 +1,27 @@
 <script lang="ts">
+  import type { OverlayMode } from "../types";
   import type { ReadyImageLink } from "../utils/images";
-  import LegacyMasonryImage from "./LegacyMasonryImage.svelte";
   import Caption from "./Caption.svelte";
+  import LegacyMasonryImage from "./LegacyMasonryImage.svelte";
 
   export let columns: number;
   export let images: ReadyImageLink[] = [];
   export let caption: string = "";
   export let descriptions: string[] = [];
-  export let permanentOverlay = false;
+  export let overlayMode: OverlayMode = "hover";
 </script>
 
 <div class={`image-layouts-masonry-grid-${columns}`}>
   {#each Array(columns) as _, colIndex}
-    <div class={`image-layouts-masonry-column`}>
-      {#each images as image, index (image.link)}
+    <div class={"image-layouts-masonry-column"}>
+      {#each images as image, index}
         {#if index % columns === colIndex}
           <LegacyMasonryImage
             src={image.link}
             description={descriptions[index] ?? image.alt}
+            width={image.width}
             {index}
-            {permanentOverlay}
+            {overlayMode}
           />
         {/if}
       {/each}

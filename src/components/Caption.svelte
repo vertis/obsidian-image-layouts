@@ -3,5 +3,13 @@
 </script>
 
 {#if caption && caption !== ""}
-  <div class="text-center text-xs text-gray-800 my-2">{caption}</div>
+  <div class="image-layouts-caption text-center text-xs my-2">{caption}</div>
 {/if}
+
+<style>
+  /* Follow the active Obsidian theme instead of a fixed gray that
+     disappears on dark backgrounds. */
+  .image-layouts-caption {
+    color: var(--text-muted);
+  }
+</style>
