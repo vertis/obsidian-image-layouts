@@ -1,19 +1,19 @@
-import LegacyLayoutComponent from "../components/LegacyImageLayout.svelte";
 import CarouselComponent from "../components/Carousel.svelte";
 import LayoutPickerComponent from "../components/LayoutPicker.svelte";
+import LegacyLayoutComponent from "../components/LegacyImageLayout.svelte";
 
 import matter from "gray-matter";
 
 import {
+  type MarkdownPostProcessorContext,
   MarkdownView,
   Plugin,
-  type MarkdownPostProcessorContext,
 } from "obsidian";
-import { getImages } from "../utils/images";
-import { layoutImages, type LayoutType } from "../interfaces";
-import { resolveLocalImages } from "../utils/image-resolver";
-import { parseFrontMatterBlock } from "../utils/front-matter";
+import { type LayoutType, layoutImages } from "../interfaces";
 import type ImageLayoutsPlugin from "../main";
+import { parseFrontMatterBlock } from "../utils/front-matter";
+import { resolveLocalImages } from "../utils/image-resolver";
+import { getImages } from "../utils/images";
 
 export function addImageLayoutMarkdownProcessor(plugin: ImageLayoutsPlugin) {
   plugin.registerMarkdownCodeBlockProcessor(
@@ -22,7 +22,7 @@ export function addImageLayoutMarkdownProcessor(plugin: ImageLayoutsPlugin) {
       // const images = getImages(source);
       // renderLayout(images, layout, ctx.sourcePath, el, this);
       renderImageLayoutComponent(source, el, ctx, plugin);
-    }
+    },
   );
 }
 
@@ -30,7 +30,7 @@ export function renderImageLayoutComponent(
   source: string,
   parent: HTMLElement,
   ctx: MarkdownPostProcessorContext,
-  plugin: ImageLayoutsPlugin
+  plugin: ImageLayoutsPlugin,
 ) {
   const m = parseFrontMatterBlock<{
     layout?: LayoutType | "carousel";
@@ -64,7 +64,12 @@ export function renderImageLayoutComponent(
     });
     picker.$on(
       "layout-selected",
-      (event: CustomEvent<{ type: LayoutType | "carousel"; params?: any }>) => {
+      (
+        event: CustomEvent<{
+          type: LayoutType | "carousel";
+          params?: { showThumbnails?: boolean };
+        }>,
+      ) => {
         const newData = m.data ?? {};
         console.log(event.detail.type);
         newData.layout = event.detail.type;
@@ -85,13 +90,13 @@ export function renderImageLayoutComponent(
             {
               line: info.lineStart + 1,
               ch: 0,
-            }
+            },
           );
           view?.editor.replaceSelection(matter.stringify(m.body, newData));
           // Deselect?
         }
         renderImageLayoutComponent(source, parent, ctx, plugin);
-      }
+      },
     );
     return;
   }
@@ -110,7 +115,7 @@ export function renderImageLayoutComponent(
   }
   if (m.data.layout.startsWith("legacy-layout-")) {
     const layoutType = m.data.layout.charAt(
-      m.data.layout.length - 1
+      m.data.layout.length - 1,
     ) as LayoutType;
     if (!layoutImages[layoutType]) {
       return; // TODO handle bad layout

@@ -1,11 +1,11 @@
 import { Plugin } from "obsidian";
-import "virtual:uno.css";
+import { addImageLayoutMarkdownProcessor } from "./processors/image-layout";
 import { addLegacyImageLayoutMarkdownProcessors } from "./processors/legacy-image-layouts";
 import { addLegacyMasonryMarkdownProcessors } from "./processors/legacy-masory-layouts";
-import { addImageLayoutMarkdownProcessor } from "./processors/image-layout";
 import { settings as s } from "./stores";
 import type { ImageLayoutsSettings } from "./types";
 import { ImageLayoutsSettingsTab } from "./views/settings";
+import "virtual:uno.css";
 
 const DEFAULT_SETTINGS: ImageLayoutsSettings = {
   shouldOverlayPermanently: false,

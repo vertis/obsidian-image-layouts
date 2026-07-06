@@ -1,9 +1,9 @@
-import LegacyMasonryLayout from "../components/LegacyMasonryLayout.svelte";
 import { type MarkdownPostProcessorContext } from "obsidian";
-import { getImages } from "../utils/images";
-import { resolveLocalImages } from "../utils/image-resolver";
+import LegacyMasonryLayout from "../components/LegacyMasonryLayout.svelte";
 import type ImageLayoutsPlugin from "../main";
 import { parseFrontMatterBlock } from "../utils/front-matter";
+import { resolveLocalImages } from "../utils/image-resolver";
+import { getImages } from "../utils/images";
 
 export function addLegacyMasonryMarkdownProcessors(plugin: ImageLayoutsPlugin) {
   for (let columns = 2; columns <= 6; columns++) {
@@ -11,7 +11,7 @@ export function addLegacyMasonryMarkdownProcessors(plugin: ImageLayoutsPlugin) {
       `image-layout-masonry-${columns}`,
       (source, el, ctx) => {
         renderLegacyMasonryLayoutComponent(source, el, ctx, plugin, columns);
-      }
+      },
     );
   }
 }
@@ -21,7 +21,7 @@ export function renderLegacyMasonryLayoutComponent(
   parent: HTMLElement,
   ctx: MarkdownPostProcessorContext,
   plugin: ImageLayoutsPlugin,
-  columns: number
+  columns: number,
 ) {
   const m = parseFrontMatterBlock<{
     caption?: string;

@@ -1,5 +1,5 @@
-import ImageLayoutsPlugin from "../main";
 import { App, PluginSettingTab, Setting } from "obsidian";
+import ImageLayoutsPlugin from "../main";
 
 export class ImageLayoutsSettingsTab extends PluginSettingTab {
   plugin: ImageLayoutsPlugin;
