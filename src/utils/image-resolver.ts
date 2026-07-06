@@ -12,10 +12,12 @@ export function resolveLocalImages(
       // file:// image loads, but exposes the same files via its resource
       // scheme (app://<id>/<path> on desktop). Mirror Obsidian core's rewrite.
       if (/^file:\/\//i.test(image.link)) {
+        // resourcePathPrefix was added after minAppVersion 0.15.0;
+        // "app://local/" is the prefix those older builds used.
         return {
           type: "resolved",
           link:
-            Platform.resourcePathPrefix +
+            (Platform.resourcePathPrefix ?? "app://local/") +
             image.link.replace(/^file:\/{2,3}/i, ""),
           alt: image.alt,
           width: image.width,
