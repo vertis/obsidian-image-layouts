@@ -66,7 +66,13 @@ const parseFrontMatter = (
 
   frontMatterLines.forEach((line) => {
     const [key, ...valueParts] = line.split(":").map((part) => part.trim());
-    const value = valueParts.join(":").trim();
+    // Strip surrounding quotes so YAML like `layout: "carousel"` (as the
+    // in-app layout picker writes) parses the same as `layout: carousel`.
+    const value = valueParts
+      .join(":")
+      .trim()
+      .replace(/^"(.*)"$/, "$1")
+      .replace(/^'(.*)'$/, "$1");
 
     if (key && value) {
       if (value === "true") result.data[key] = true;

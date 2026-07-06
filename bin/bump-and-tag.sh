@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 
 # Pass an argument to specify the version bump type: patch, minor, or major
 version_bump_type=$1 # Accept version bump type as the first script argument
