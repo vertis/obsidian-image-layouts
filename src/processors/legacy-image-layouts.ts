@@ -1,13 +1,13 @@
-import LayoutComponent from "../components/LegacyImageLayout.svelte";
 import { type MarkdownPostProcessorContext } from "obsidian";
-import { layoutImages, type LayoutType } from "../interfaces";
-import { getImages } from "../utils/images";
-import { resolveLocalImages } from "../utils/image-resolver";
+import LayoutComponent from "../components/LegacyImageLayout.svelte";
+import { type LayoutType, layoutImages } from "../interfaces";
 import type ImageLayoutsPlugin from "../main";
 import { parseFrontMatterBlock } from "../utils/front-matter";
+import { resolveLocalImages } from "../utils/image-resolver";
+import { getImages } from "../utils/images";
 
 export function addLegacyImageLayoutMarkdownProcessors(
-  plugin: ImageLayoutsPlugin
+  plugin: ImageLayoutsPlugin,
 ) {
   for (const layout in layoutImages) {
     plugin.registerMarkdownCodeBlockProcessor(
@@ -20,9 +20,9 @@ export function addLegacyImageLayoutMarkdownProcessors(
           el,
           ctx,
           plugin,
-          layout as LayoutType
+          layout as LayoutType,
         );
-      }
+      },
     );
   }
 }
@@ -32,7 +32,7 @@ export function renderLegacyLayoutComponent(
   parent: HTMLElement,
   ctx: MarkdownPostProcessorContext,
   plugin: ImageLayoutsPlugin,
-  layout: LayoutType
+  layout: LayoutType,
 ) {
   const m = parseFrontMatterBlock<{
     caption?: string;

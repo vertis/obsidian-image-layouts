@@ -1,10 +1,10 @@
-import { Plugin, type MarkdownPostProcessorContext } from "obsidian";
+import { type MarkdownPostProcessorContext, Plugin } from "obsidian";
 import type { ImageLink, ReadyImageLink } from "./images";
 
 export function resolveLocalImages(
   images: ImageLink[],
   ctx: MarkdownPostProcessorContext,
-  plugin: Plugin
+  plugin: Plugin,
 ): ReadyImageLink[] {
   // 	var destFile = plugin.app.metadataCache.getFirstLinkpathDest(link, sourcePath);
   // if (destFile) {
@@ -15,7 +15,7 @@ export function resolveLocalImages(
     if (image.type === "wiki") {
       const destFile = plugin.app.metadataCache.getFirstLinkpathDest(
         image.link,
-        ctx.sourcePath
+        ctx.sourcePath,
       );
       if (destFile) {
         return {
