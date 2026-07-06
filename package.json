@@ -13,7 +13,8 @@
     "format": "biome format --write ./src",
     "lint": "biome lint --apply-unsafe ./src",
     "lint:ci": "biome ci ./src",
-    "verify": "bun run lint:ci && bun run check && bun run test && bun run build"
+    "check:bundle": "bun bin/check-bundle.mjs",
+    "verify": "bun run lint:ci && bun run check && bun run test && bun run build && bun run check:bundle"
   },
   "devDependencies": {
     "@biomejs/biome": "1.3.3",
@@ -33,7 +34,6 @@
     "vitest": "^1.2.2"
   },
   "dependencies": {
-    "front-matter": "^4.0.2",
-    "gray-matter": "^4.0.3"
+    "front-matter": "^4.0.2"
   }
 }

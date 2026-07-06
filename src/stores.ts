@@ -3,4 +3,6 @@ import type { ImageLayoutsSettings } from "./types";
 
 export const settings = writable<ImageLayoutsSettings>({
   shouldOverlayPermanently: false,
+  overlayMode: "hover",
+  placeholderImage: "",
 });
