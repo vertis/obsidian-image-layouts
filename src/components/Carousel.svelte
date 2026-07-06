@@ -45,15 +45,10 @@
 
     <div class="w-full mb-2">
       {#if showThumbnails}
+        <!-- svelte-ignore a11y-no-static-element-interactions -->
         <div
           class="overflow-x-auto overflow-y-hidden whitespace-nowrap touch-pan-x scroll-snap-x scrollbar-hide"
-          on:touchmove={(e) => {
-            e.preventDefault();
-            const slide = e.targetTouches[0].clientX;
-            if (e?.target?.scrollLeft) {
-              e.target.scrollLeft += slide;
-            }
-          }}
+          on:touchmove|stopPropagation={() => {}}
         >
           {#each imageUrls as imageUrl, i}
             <div
