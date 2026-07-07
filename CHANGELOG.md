@@ -1,5 +1,32 @@
 # Changelog
 
+## 0.17.0
+
+You never need to memorize a layout letter again.
+
+### Added
+
+- **Visual layout picker**: an empty `image-layout` block now shows every
+  layout — grids a–i, single, masonry 2–6, and both carousel variants — as
+  small visual schematics instead of two text cards. Layouts that fit the
+  number of images already in the block are highlighted, and the picker
+  follows your theme.
+- **Change layout in place**: rendered layouts show a small button on hover
+  (faintly visible on touch devices) that reopens the picker. Modern blocks
+  rewrite their `layout` option; legacy blocks rename the fence
+  (`image-layout-a` → `image-layout-masonry-3`), so your documents keep
+  their format.
+- **Insert image layout command**: pick a layout from a modal and insert the
+  block at the cursor — or select image lines first and the command wraps
+  them. Works in source mode and on mobile.
+- The modern `image-layout` block now renders masonry too:
+  `layout: masonry-2` … `layout: masonry-6`.
+
+### Fixed
+
+- Choosing a layout when the block position can't be resolved (embeds,
+  exports) now shows a notice instead of silently doing nothing.
+
 ## 0.16.0
 
 The plugin was quietly broken in several long-standing ways — most notably it

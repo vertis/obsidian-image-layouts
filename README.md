@@ -32,9 +32,9 @@ When I find time I'm hoping to add the following:
 - Permanent overlays [DONE]
 - Overlays from markdown links [DONE]
 - General gallery to support scrolling through photos [DONE]
-- Captions from wikilinks, overlay never/hover/always, folder galleries, alignment and fit options [DONE - NEW!]
+- Captions from wikilinks, overlay never/hover/always, folder galleries, alignment and fit options [DONE]
+- Visually pick layouts — every layout, in the block and from the command palette [DONE - NEW!]
 - Drag and drop support
-- Visually pick empty layouts [PARTIAL]
 - User-definable custom layouts (#15)
 
 ## Documentation

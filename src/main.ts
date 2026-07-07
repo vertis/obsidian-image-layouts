@@ -4,6 +4,9 @@ import { addLegacyImageLayoutMarkdownProcessors } from "./processors/legacy-imag
 import { addLegacyMasonryMarkdownProcessors } from "./processors/legacy-masory-layouts";
 import { settings as s } from "./stores";
 import type { ImageLayoutsSettings } from "./types";
+import { buildLayoutBlock } from "./utils/blocks";
+import { getImages } from "./utils/images";
+import { ImageLayoutPickerModal } from "./views/picker-modal";
 import { ImageLayoutsSettingsTab } from "./views/settings";
 import "virtual:uno.css";
 
@@ -37,6 +40,19 @@ export default class ImageLayoutsPlugin extends Plugin {
     await this.loadSettings();
 
     this.addSettingTab(new ImageLayoutsSettingsTab(this.app, this));
+
+    this.addCommand({
+      id: "insert-image-layout",
+      name: "Insert image layout",
+      icon: "layout-grid",
+      editorCallback: (editor) => {
+        const selection = editor.getSelection();
+        const imageCount = getImages(selection).length;
+        new ImageLayoutPickerModal(this.app, imageCount, (choice) => {
+          editor.replaceSelection(buildLayoutBlock(choice, selection));
+        }).open();
+      },
+    });
 
     addImageLayoutMarkdownProcessor(this);
     addLegacyImageLayoutMarkdownProcessors(this);
