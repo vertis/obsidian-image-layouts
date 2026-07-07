@@ -80,6 +80,7 @@ export type LayoutBlockOptions = {
 // Extra options understood by the modern `image-layout` block.
 export type ImageLayoutBlockOptions = LayoutBlockOptions & {
   layout?: string;
+  grid?: string;
   carouselShowThumbnails?: boolean;
   carouselBackground?: string;
   carouselHeight?: number | string;
