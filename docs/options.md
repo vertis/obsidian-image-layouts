@@ -1,5 +1,16 @@
 # Block Options Reference
 
+An empty `image-layout` block shows a visual picker with every layout —
+grids, masonry, and carousel — as small schematics; layouts matching the
+number of images already in the block are highlighted. Rendered layouts show
+a change-layout button on hover to reopen the picker. There is also an
+**Insert image layout** command in the command palette that wraps the
+current selection.
+
+The modern `image-layout` block accepts `layout: a` … `layout: i`,
+`layout: single`, `layout: masonry-2` … `layout: masonry-6`, or
+`layout: carousel`.
+
 Every layout block accepts options as YAML front matter inside the codeblock:
 
 ````
