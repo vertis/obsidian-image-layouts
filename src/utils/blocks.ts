@@ -43,16 +43,16 @@ export const updateLayoutInBlockSource = (
     if (closing >= 0) {
       const end = closing + 1;
       const inner = lines.slice(1, end);
-      const layoutIndex = inner.findIndex((line) =>
-        /^\s*layout\s*:/.test(line),
-      );
+      // Keys are matched at column 0 only — an indented `layout:` inside a
+      // block scalar (e.g. a multi-line caption) is content, not a key.
+      const layoutIndex = inner.findIndex((line) => /^layout\s*:/.test(line));
       if (layoutIndex >= 0) {
         inner[layoutIndex] = layoutLine;
       } else {
         inner.push(layoutLine);
       }
       const thumbnailsIndex = inner.findIndex((line) =>
-        /^\s*carouselShowThumbnails\s*:/.test(line),
+        /^carouselShowThumbnails\s*:/.test(line),
       );
       if (wantThumbnails) {
         if (thumbnailsIndex >= 0) {
@@ -66,7 +66,7 @@ export const updateLayoutInBlockSource = (
       // Picking Custom seeds a starter grid to edit, unless one exists.
       if (
         choice.type === "custom" &&
-        !inner.some((line) => /^\s*grid\s*:/.test(line))
+        !inner.some((line) => /^grid\s*:/.test(line))
       ) {
         inner.push(...STARTER_GRID_LINES);
       }

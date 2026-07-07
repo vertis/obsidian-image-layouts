@@ -3,7 +3,7 @@
   import type { OverlayMode } from "../types";
   import type { CustomGrid } from "../utils/custom-grid";
   import type { ReadyImageLink } from "../utils/images";
-  import { PLACEHOLDER_DATA_URI } from "../utils/placeholder";
+  import { PLACEHOLDER_DATA_URI, padToSlots } from "../utils/placeholder";
   import Caption from "./Caption.svelte";
   import LegacyGridImage from "./LegacyGridImage.svelte";
 
@@ -15,19 +15,7 @@
   export let fit: FitMode = "cover";
   export let placeholderUrl: string = PLACEHOLDER_DATA_URI;
 
-  let displayImages: ReadyImageLink[] = [];
-
-  if (images.length < grid.slots) {
-    displayImages = [
-      ...images,
-      ...Array(grid.slots - images.length).fill({
-        type: "external",
-        link: placeholderUrl,
-      }),
-    ];
-  } else {
-    displayImages = images.slice(0, grid.slots);
-  }
+  $: displayImages = padToSlots(images, grid.slots, placeholderUrl);
 </script>
 
 <div
