@@ -1,5 +1,6 @@
 import CarouselComponent from "../components/Carousel.svelte";
 import CustomGridLayout from "../components/CustomGridLayout.svelte";
+import ErrorMessage from "../components/ErrorMessage.svelte";
 import LayoutPickerComponent from "../components/LayoutPicker.svelte";
 import LegacyLayoutComponent from "../components/LegacyImageLayout.svelte";
 import LegacyMasonryLayout from "../components/LegacyMasonryLayout.svelte";
@@ -119,11 +120,12 @@ export function renderImageLayoutComponent(
   if (layout === "custom") {
     const parsed = parseCustomGrid(m.data.grid);
     if (parsed.error) {
-      const errorEl = parent.createDiv({ cls: "image-layouts-error" });
-      errorEl.setText(`Image Layouts: ${parsed.error}`);
-      errorEl.setAttr(
-        "style",
-        "color: var(--text-muted); font-size: 0.85em; padding: 0.5rem; border: 1px dashed var(--background-modifier-border); border-radius: 6px; white-space: pre-wrap;",
+      // Mounted switchable so the change-layout button still offers a way
+      // out of a broken grid without hand-editing YAML.
+      mountSwitchable(
+        ErrorMessage,
+        { message: `Image Layouts: ${parsed.error}` },
+        "custom",
       );
       return;
     }

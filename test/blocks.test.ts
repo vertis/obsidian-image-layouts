@@ -135,3 +135,13 @@ test("updateLayoutInBlockSource keeps an existing grid when picking custom", () 
     "---\nlayout: custom\ngrid: |\n  X X\n  Y Z\n---\n![[a.jpg]]\n",
   );
 });
+
+test("updateLayoutInBlockSource ignores keys inside block scalars", () => {
+  // "grid:" and "layout:" appear indented inside the caption block scalar —
+  // they are content, not keys, and must not suppress seeding or be edited.
+  const source =
+    "---\ncaption: |\n  grid: sketch\n  layout: moodboard\n---\n![[a.jpg]]\n";
+  expect(updateLayoutInBlockSource(source, { type: "custom" })).toBe(
+    "---\ncaption: |\n  grid: sketch\n  layout: moodboard\nlayout: custom\ngrid: |\n  A A B\n  A A C\n---\n![[a.jpg]]\n",
+  );
+});
