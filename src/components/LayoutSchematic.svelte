@@ -10,6 +10,8 @@
   export let grid: LayoutType | undefined = undefined;
   export let masonryColumns: number | undefined = undefined;
   export let carousel: "pills" | "thumbnails" | undefined = undefined;
+  // The "design your own" tile: a hero region plus two stacked cells.
+  export let custom: boolean = false;
 
   // Alternating block heights give the masonry schematic its stagger.
   const masonryHeights = [
@@ -55,6 +57,16 @@
         {/if}
       </div>
     </div>
+  {:else if custom}
+    <div
+      class="schematic-grid"
+      style:grid-template-columns="2fr 1fr"
+      style:grid-template-areas={'"hero top" "hero bottom"'}
+    >
+      <div class="cell dashed" style:grid-area="hero"></div>
+      <div class="cell dashed" style:grid-area="top"></div>
+      <div class="cell dashed" style:grid-area="bottom"></div>
+    </div>
   {/if}
 </div>
 
@@ -68,6 +80,11 @@
   .cell {
     background-color: var(--background-modifier-border);
     border-radius: 2px;
+  }
+
+  .cell.dashed {
+    background-color: transparent;
+    border: 1px dashed var(--text-muted);
   }
 
   .schematic-grid {

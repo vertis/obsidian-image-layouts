@@ -1,3 +1,5 @@
+import { PLACEHOLDER_DATA_URI } from "../src/utils/placeholder";
+
 // Types
 type ImageLink = {
   url: string;
@@ -19,6 +21,7 @@ type LayoutType =
 type FrontMatter = {
   type?: string;
   layout?: string;
+  grid?: string;
   showThumbnails?: boolean;
   caption?: string;
   descriptions?: string[];
@@ -64,7 +67,8 @@ const parseFrontMatter = (
   const frontMatter = lines.slice(1, endIndex).join("\n");
   const frontMatterLines = frontMatter.split("\n");
 
-  frontMatterLines.forEach((line) => {
+  for (let i = 0; i < frontMatterLines.length; i++) {
+    const line = frontMatterLines[i];
     const [key, ...valueParts] = line.split(":").map((part) => part.trim());
     // Strip surrounding quotes so YAML like `layout: "carousel"` (as the
     // in-app layout picker writes) parses the same as `layout: carousel`.
@@ -74,12 +78,27 @@ const parseFrontMatter = (
       .replace(/^"(.*)"$/, "$1")
       .replace(/^'(.*)'$/, "$1");
 
+    // Block scalars (`grid: |`, including chomping/indent indicators like
+    // `|-` or `>2`): consume the following indented lines.
+    if (key && /^[|>][+-]?\d*$/.test(value)) {
+      const blockLines: string[] = [];
+      while (
+        i + 1 < frontMatterLines.length &&
+        (/^\s/.test(frontMatterLines[i + 1]) || frontMatterLines[i + 1] === "")
+      ) {
+        i++;
+        blockLines.push(frontMatterLines[i].trim());
+      }
+      result.data[key] = blockLines.join("\n");
+      continue;
+    }
+
     if (key && value) {
       if (value === "true") result.data[key] = true;
       else if (value === "false") result.data[key] = false;
       else result.data[key] = value;
     }
-  });
+  }
 
   // Extract the content after front matter
   result.content = lines.slice(endIndex + 1).join("\n");
@@ -107,6 +126,67 @@ const getImages = (source: string): ImageLink[] => {
 
 console.log("Image Layouts loading...");
 
+function padImages(images: ImageLink[], slots: number): ImageLink[] {
+  return images.length < slots
+    ? [
+        ...images,
+        ...Array(slots - images.length).fill({ url: PLACEHOLDER_DATA_URI }),
+      ]
+    : images.slice(0, slots);
+}
+
+// Shared image cell (wrapper + img + optional description overlay). One
+// builder keeps the grid, masonry, and custom renderers from drifting apart.
+function createImageCell(
+  image: ImageLink,
+  index: number,
+  config: FrontMatter
+): HTMLElement {
+  const wrapper = document.createElement("div");
+  wrapper.className = "group relative";
+
+  const img = document.createElement("img");
+  img.src = image.url;
+  img.alt = image.alt || `Image ${index + 1}`;
+  img.className = "w-full h-full object-cover object-center";
+
+  const description = config.descriptions?.[index] || image.alt;
+  if (description) {
+    const overlay = document.createElement("div");
+    overlay.className = "absolute bottom-0 left-0 right-0 flex items-end p-4";
+    overlay.setAttribute("aria-hidden", "true");
+    if (!config.permanentOverlay) {
+      overlay.classList.add("opacity-0", "group-hover:opacity-100");
+    }
+
+    const text = document.createElement("div");
+    text.className =
+      "w-full rounded-md bg-white bg-opacity-75 px-4 py-2 text-center text-sm font-medium text-gray-900 backdrop-blur backdrop-filter";
+    text.textContent = description;
+
+    overlay.appendChild(text);
+    wrapper.appendChild(overlay);
+  }
+
+  wrapper.appendChild(img);
+  return wrapper;
+}
+
+// Caption below the layout, outside the grid container so it can't be
+// auto-placed into an empty grid cell.
+function withCaption(layout: HTMLElement, config: FrontMatter): HTMLElement {
+  if (!config.caption) {
+    return layout;
+  }
+  const outer = document.createElement("div");
+  outer.appendChild(layout);
+  const caption = document.createElement("div");
+  caption.className = "text-center mt-2 text-sm text-gray-600";
+  caption.textContent = config.caption;
+  outer.appendChild(caption);
+  return outer;
+}
+
 // Create legacy grid layout
 function createLegacyGridLayout(
   images: ImageLink[],
@@ -116,56 +196,14 @@ function createLegacyGridLayout(
   const container = document.createElement("div");
   container.className = `image-layouts image-layouts-grid image-layouts-layout-${layout}`;
 
-  const requiredImages = layoutImages[layout];
-  const displayImages =
-    images.length < requiredImages
-      ? [
-          ...images,
-          ...Array(requiredImages - images.length).fill({
-            url: "https://via.placeholder.com/640x480",
-          }),
-        ]
-      : images.slice(0, requiredImages);
-
+  const displayImages = padImages(images, layoutImages[layout]);
   displayImages.forEach((image, index) => {
-    const wrapper = document.createElement("div");
-    wrapper.className = `group relative image-layouts-image-${index}`;
-
-    const img = document.createElement("img");
-    img.src = image.url;
-    img.alt = image.alt || `Image ${index + 1}`;
-    img.className = "w-full h-full object-cover object-center";
-
-    if (image.alt || (config.descriptions && config.descriptions[index])) {
-      const description = config.descriptions?.[index] || image.alt;
-      const overlay = document.createElement("div");
-      overlay.className = "absolute bottom-0 left-0 right-0 flex items-end p-4";
-      overlay.setAttribute("aria-hidden", "true");
-      if (!config.permanentOverlay) {
-        overlay.classList.add("opacity-0", "group-hover:opacity-100");
-      }
-
-      const text = document.createElement("div");
-      text.className =
-        "w-full rounded-md bg-white bg-opacity-75 px-4 py-2 text-center text-sm font-medium text-gray-900 backdrop-blur backdrop-filter";
-      text.textContent = description;
-
-      overlay.appendChild(text);
-      wrapper.appendChild(overlay);
-    }
-
-    wrapper.appendChild(img);
-    container.appendChild(wrapper);
+    const cell = createImageCell(image, index, config);
+    cell.classList.add(`image-layouts-image-${index}`);
+    container.appendChild(cell);
   });
 
-  if (config.caption) {
-    const caption = document.createElement("div");
-    caption.className = "text-center mt-2 text-sm text-gray-600";
-    caption.textContent = config.caption;
-    container.appendChild(caption);
-  }
-
-  return container;
+  return withCaption(container, config);
 }
 
 // Create masonry layout
@@ -189,47 +227,15 @@ function createMasonryLayout(
   // Distribute images across columns
   images.forEach((image, index) => {
     const colIndex = index % columns;
-    const wrapper = document.createElement("div");
-    wrapper.className = "group relative";
-
-    const img = document.createElement("img");
-    img.src = image.url;
-    img.alt = image.alt || `Image ${index + 1}`;
-    img.className = "w-full h-full object-cover object-center";
-
-    if (image.alt || (config.descriptions && config.descriptions[index])) {
-      const description = config.descriptions?.[index] || image.alt;
-      const overlay = document.createElement("div");
-      overlay.className = "absolute bottom-0 left-0 right-0 flex items-end p-4";
-      overlay.setAttribute("aria-hidden", "true");
-      if (!config.permanentOverlay) {
-        overlay.classList.add("opacity-0", "group-hover:opacity-100");
-      }
-
-      const text = document.createElement("div");
-      text.className =
-        "w-full rounded-md bg-white bg-opacity-75 px-4 py-2 text-center text-sm font-medium text-gray-900 backdrop-blur backdrop-filter";
-      text.textContent = description;
-
-      overlay.appendChild(text);
-      wrapper.appendChild(overlay);
-    }
-
-    wrapper.appendChild(img);
-    columnElements[colIndex].appendChild(wrapper);
+    columnElements[colIndex].appendChild(
+      createImageCell(image, index, config)
+    );
   });
 
   // Add columns to container
   columnElements.forEach((col) => container.appendChild(col));
 
-  if (config.caption) {
-    const caption = document.createElement("div");
-    caption.className = "text-center mt-2 text-sm text-gray-600";
-    caption.textContent = config.caption;
-    container.appendChild(caption);
-  }
-
-  return container;
+  return withCaption(container, config);
 }
 
 // Create carousel
@@ -406,6 +412,9 @@ function createModernLayout(
   if (normalized === "carousel") {
     return createCarousel(images, data.showThumbnails !== false); // Default to showing thumbnails
   }
+  if (normalized === "custom") {
+    return createCustomGridLayout(images, String(data.grid ?? ""), data);
+  }
   const masonry = normalized.match(/^masonry-([2-6])$/);
   if (masonry) {
     return createMasonryLayout(images, parseInt(masonry[1]), data);
@@ -414,6 +423,102 @@ function createModernLayout(
     return createLegacyGridLayout(images, normalized as LayoutType, data);
   }
   return null;
+}
+
+// Renders `layout: custom` blocks: rows of whitespace-separated tokens map
+// to CSS grid-template-areas; "." leaves a cell empty. Mirrors
+// src/utils/custom-grid.ts in the plugin.
+function createCustomGridError(message: string): HTMLElement {
+  const errorEl = document.createElement("div");
+  errorEl.className = "image-layouts-error";
+  errorEl.style.cssText =
+    "color: #888; font-size: 0.85em; padding: 0.5rem; border: 1px dashed #8886; border-radius: 6px; white-space: pre-wrap;";
+  errorEl.textContent = `Image Layouts: ${message}`;
+  return errorEl;
+}
+
+function createCustomGridLayout(
+  images: ImageLink[],
+  gridSpec: string,
+  config: FrontMatter
+): HTMLElement {
+  const rows = gridSpec
+    .split("\n")
+    .map((line) => line.trim())
+    .filter((line) => line !== "")
+    .map((line) => line.split(/\s+/));
+  if (rows.length === 0) {
+    return createCustomGridError("A custom layout needs a `grid` option.");
+  }
+  const columns = rows[0].length;
+  if (rows.some((row) => row.length !== columns)) {
+    return createCustomGridError(
+      "Every row in `grid` must have the same number of cells."
+    );
+  }
+
+  const order: string[] = [];
+  for (const row of rows) {
+    for (const cell of row) {
+      if (cell !== "." && !order.includes(cell)) order.push(cell);
+    }
+  }
+  if (order.length === 0) {
+    return createCustomGridError("The `grid` needs at least one image cell.");
+  }
+  if (order.length > 20) {
+    return createCustomGridError("`grid` supports up to 20 images.");
+  }
+
+  // grid-template-areas requires solid rectangles; an invalid template
+  // would be discarded by the browser and stack every image on top of
+  // each other, so validate here like the in-app renderer does.
+  for (const token of order) {
+    let minRow = Number.POSITIVE_INFINITY;
+    let maxRow = -1;
+    let minCol = Number.POSITIVE_INFINITY;
+    let maxCol = -1;
+    let count = 0;
+    for (const [r, row] of rows.entries()) {
+      for (const [c, cell] of row.entries()) {
+        if (cell === token) {
+          minRow = Math.min(minRow, r);
+          maxRow = Math.max(maxRow, r);
+          minCol = Math.min(minCol, c);
+          maxCol = Math.max(maxCol, c);
+          count++;
+        }
+      }
+    }
+    if (count !== (maxRow - minRow + 1) * (maxCol - minCol + 1)) {
+      return createCustomGridError(
+        `The cells for "${token}" must form a solid rectangle.`
+      );
+    }
+  }
+
+  const container = document.createElement("div");
+  container.className = "image-layouts image-layouts-grid";
+  container.style.display = "grid";
+  container.style.gap = "0.5rem";
+  container.style.gridTemplateColumns = `repeat(${columns}, 1fr)`;
+  container.style.gridTemplateAreas = rows
+    .map(
+      (row) =>
+        `"${row
+          .map((cell) => (cell === "." ? "." : `image-${order.indexOf(cell)}`))
+          .join(" ")}"`
+    )
+    .join(" ");
+
+  const displayImages = padImages(images, order.length);
+  displayImages.forEach((image, index) => {
+    const cell = createImageCell(image, index, config);
+    cell.style.gridArea = `image-${index}`;
+    container.appendChild(cell);
+  });
+
+  return withCaption(container, config);
 }
 
 // Register legacy layout processors for backward compatibility

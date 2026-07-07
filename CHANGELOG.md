@@ -1,5 +1,25 @@
 # Changelog
 
+## 0.18.0
+
+### Added
+
+- **Custom layouts** (#15): `layout: custom` with an ASCII-art `grid` —
+  rows of letters where equal letters merge into one region and `.` leaves
+  a cell empty:
+
+  ```
+  layout: custom
+  grid: |
+    A A B
+    A A C
+  ```
+
+  Letters map to your images in order of first appearance. Invalid grids
+  (ragged rows, non-rectangular regions) render a friendly message instead
+  of nothing. The picker gets a "custom" tile that seeds a starter grid,
+  and published sites render custom layouts too.
+
 ## 0.17.0
 
 You never need to memorize a layout letter again.

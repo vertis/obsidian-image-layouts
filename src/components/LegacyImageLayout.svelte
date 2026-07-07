@@ -2,7 +2,7 @@
   import type { AlignMode, FitMode, LayoutType } from "../interfaces";
   import type { OverlayMode } from "../types";
   import type { ReadyImageLink } from "../utils/images";
-  import { PLACEHOLDER_DATA_URI } from "../utils/placeholder";
+  import { PLACEHOLDER_DATA_URI, padToSlots } from "../utils/placeholder";
   import Caption from "./Caption.svelte";
   import LegacyGridImage from "./LegacyGridImage.svelte";
 
@@ -17,21 +17,9 @@
   export let width: number | string | undefined = undefined;
   export let placeholderUrl: string = PLACEHOLDER_DATA_URI;
 
-  let displayImages: ReadyImageLink[] = [];
-
   // If there are fewer images than the layout needs, fill the remaining
   // slots with the placeholder.
-  if (images.length < requiredImages) {
-    displayImages = [
-      ...images,
-      ...Array(requiredImages - images.length).fill({
-        type: "external",
-        link: placeholderUrl,
-      }),
-    ];
-  } else {
-    displayImages = images.slice(0, requiredImages);
-  }
+  $: displayImages = padToSlots(images, requiredImages, placeholderUrl);
 
   const widthStyle = typeof width === "number" ? `${width}px` : width;
 </script>

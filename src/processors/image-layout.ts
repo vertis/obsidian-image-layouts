@@ -1,4 +1,6 @@
 import CarouselComponent from "../components/Carousel.svelte";
+import CustomGridLayout from "../components/CustomGridLayout.svelte";
+import ErrorMessage from "../components/ErrorMessage.svelte";
 import LayoutPickerComponent from "../components/LayoutPicker.svelte";
 import LegacyLayoutComponent from "../components/LegacyImageLayout.svelte";
 import LegacyMasonryLayout from "../components/LegacyMasonryLayout.svelte";
@@ -18,6 +20,7 @@ import {
   parseMasonryLayoutName,
   updateLayoutInBlockSource,
 } from "../utils/blocks";
+import { parseCustomGrid } from "../utils/custom-grid";
 import { writeBlockSource } from "../utils/editor-writeback";
 import { parseFrontMatterBlock } from "../utils/front-matter";
 import { normalizeAlign, normalizeDescriptions } from "../utils/options";
@@ -110,6 +113,34 @@ export function renderImageLayoutComponent(
         height: m.data.carouselHeight,
       },
       m.data.carouselShowThumbnails ? "carousel-thumbnails" : "carousel",
+    );
+    return;
+  }
+
+  if (layout === "custom") {
+    const parsed = parseCustomGrid(m.data.grid);
+    if (parsed.error) {
+      // Mounted switchable so the change-layout button still offers a way
+      // out of a broken grid without hand-editing YAML.
+      mountSwitchable(
+        ErrorMessage,
+        { message: `Image Layouts: ${parsed.error}` },
+        "custom",
+      );
+      return;
+    }
+    mountSwitchable(
+      CustomGridLayout,
+      {
+        grid: parsed.grid,
+        images: readyImages,
+        caption: m.data.caption ?? "",
+        descriptions,
+        overlayMode: resolveOverlayMode(m.data, plugin.settings),
+        fit: m.data.fit,
+        placeholderUrl: resolvePlaceholderImage(plugin),
+      },
+      "custom",
     );
     return;
   }
