@@ -52,6 +52,7 @@ export function addLegacyImageLayoutMarkdownProcessors(
           plugin,
           "single",
           ALIGN_SHORTHANDS[shorthand],
+          shorthand,
         );
       },
     );
@@ -78,6 +79,10 @@ export function renderLegacyLayoutComponent(
   plugin: ImageLayoutsPlugin,
   layout: LayoutType,
   defaultAlign: AlignMode = "full",
+  // The token in the fence name — differs from `layout` for the align
+  // shorthands (image-layout-left renders `single` but its token is `left`),
+  // and the picker must not mark `single` as current for those blocks.
+  fenceLayout: string = layout,
 ) {
   const m = parseFrontMatterBlock<LayoutBlockOptions>(source);
   const readyImages = collectBlockImages(m.data, m.body, ctx, plugin);
@@ -101,7 +106,7 @@ export function renderLegacyLayoutComponent(
       switchable: ctx.getSectionInfo(parent) !== null,
       imageCount: readyImages.length,
       allowCarousel: false,
-      currentLayout: layout,
+      currentLayout: fenceLayout,
     },
   });
   wrapper.$on("apply-layout", (event: CustomEvent<PickerChoice>) => {

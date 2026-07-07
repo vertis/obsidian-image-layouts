@@ -1,5 +1,4 @@
 import type { PickerChoice } from "../interfaces";
-import { stringifyFrontMatterBlock } from "./front-matter";
 
 // `layout: masonry-3` → 3; null for anything that isn't a masonry layout name.
 export const parseMasonryLayoutName = (layout: string): number | null => {
@@ -24,16 +23,70 @@ export const replaceFenceLayout = (
   return fenceLine.replace(/image-layout-[\w-]+/, `image-layout-${layout}`);
 };
 
+// Applies a picker choice to a block's raw source by editing only the
+// layout / carouselShowThumbnails lines. Everything else — comments, key
+// order, formatting — is preserved byte for byte, so switching layouts never
+// rewrites frontmatter the user authored by hand.
+export const updateLayoutInBlockSource = (
+  source: string,
+  choice: PickerChoice,
+): string => {
+  const layoutLine = `layout: ${choice.type}`;
+  const wantThumbnails =
+    choice.type === "carousel" && !!choice.params?.showThumbnails;
+  const thumbnailsLine = "carouselShowThumbnails: true";
+
+  const lines = source.split("\n");
+  if (lines[0]?.trim() === "---") {
+    const closing = lines.slice(1).findIndex((line) => line.trim() === "---");
+    if (closing >= 0) {
+      const end = closing + 1;
+      const inner = lines.slice(1, end);
+      const layoutIndex = inner.findIndex((line) =>
+        /^\s*layout\s*:/.test(line),
+      );
+      if (layoutIndex >= 0) {
+        inner[layoutIndex] = layoutLine;
+      } else {
+        inner.push(layoutLine);
+      }
+      const thumbnailsIndex = inner.findIndex((line) =>
+        /^\s*carouselShowThumbnails\s*:/.test(line),
+      );
+      if (wantThumbnails) {
+        if (thumbnailsIndex >= 0) {
+          inner[thumbnailsIndex] = thumbnailsLine;
+        } else {
+          inner.push(thumbnailsLine);
+        }
+      } else if (choice.type === "carousel" && thumbnailsIndex >= 0) {
+        inner.splice(thumbnailsIndex, 1);
+      }
+      const rest = lines.slice(end + 1).join("\n");
+      return `---\n${inner.join("\n")}\n---\n${rest}`;
+    }
+  }
+  const frontMatter = wantThumbnails
+    ? `---\n${layoutLine}\n${thumbnailsLine}\n---\n`
+    : `---\n${layoutLine}\n---\n`;
+  const body = source === "" || source.endsWith("\n") ? source : `${source}\n`;
+  return frontMatter + body;
+};
+
 // Builds a complete modern image-layout codeblock for the insert command.
+// The fence is longer than any backtick run in the content so selections
+// containing codeblocks can't terminate it early.
 export const buildLayoutBlock = (
   choice: PickerChoice,
   content = "",
 ): string => {
-  const data: Record<string, unknown> = { layout: choice.type };
-  if (choice.params?.showThumbnails) {
-    data.carouselShowThumbnails = true;
-  }
   const trimmed = content.trim();
   const body = trimmed === "" ? "" : `${trimmed}\n`;
-  return `\`\`\`image-layout\n${stringifyFrontMatterBlock(body, data)}\`\`\`\n`;
+  const inner = updateLayoutInBlockSource(body, choice);
+  const longestRun = Math.max(
+    0,
+    ...[...inner.matchAll(/`+/g)].map((match) => match[0].length),
+  );
+  const fence = "`".repeat(Math.max(3, longestRun + 1));
+  return `${fence}image-layout\n${inner}${fence}\n`;
 };
