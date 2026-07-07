@@ -383,24 +383,38 @@ publish.registerMarkdownCodeBlockProcessor("image-layout", (source, el) => {
     el.removeChild(el.firstChild);
   }
 
-  if (data.layout === "carousel") {
-    console.log("Creating carousel with thumbnails:", data.showThumbnails);
-    const carousel = createCarousel(images, data.showThumbnails !== false); // Default to showing thumbnails
-    el.appendChild(carousel);
-  } else if (data.layout.match(/^legacy-layout-[a-i]$/)) {
-    const layoutType = data.layout.charAt(data.layout.length - 1) as LayoutType;
-    if (layoutImages[layoutType]) {
-      const grid = createLegacyGridLayout(images, layoutType, data);
-      el.appendChild(grid);
-    }
-  } else if (data.layout.match(/^legacy-masonry-[2-6]$/)) {
-    const columns = parseInt(data.layout.charAt(data.layout.length - 1));
-    if (columns >= 2 && columns <= 6) {
-      const masonry = createMasonryLayout(images, columns, data);
-      el.appendChild(masonry);
-    }
+  const layout = createModernLayout(String(data.layout), images, data);
+  if (layout) {
+    el.appendChild(layout);
   }
 });
+
+// Renders the modern image-layout block's layout value, accepting every
+// form the app writes: carousel, bare grid names (a-i, single), masonry-N,
+// and the older legacy-layout-* / legacy-masonry-* spellings.
+function createModernLayout(
+  layoutValue: string,
+  images: ImageLink[],
+  data: FrontMatter,
+): HTMLElement | null {
+  const normalized = layoutValue.startsWith("legacy-layout-")
+    ? layoutValue.slice("legacy-layout-".length)
+    : layoutValue.startsWith("legacy-masonry-")
+      ? `masonry-${layoutValue.slice("legacy-masonry-".length)}`
+      : layoutValue;
+
+  if (normalized === "carousel") {
+    return createCarousel(images, data.showThumbnails !== false); // Default to showing thumbnails
+  }
+  const masonry = normalized.match(/^masonry-([2-6])$/);
+  if (masonry) {
+    return createMasonryLayout(images, parseInt(masonry[1]), data);
+  }
+  if (layoutImages[normalized as LayoutType]) {
+    return createLegacyGridLayout(images, normalized as LayoutType, data);
+  }
+  return null;
+}
 
 // Register legacy layout processors for backward compatibility
 Object.keys(layoutImages).forEach((layout) => {
@@ -453,8 +467,8 @@ document.addEventListener("DOMContentLoaded", () => {
         if (layoutImages[layoutType]) {
           layout = createLegacyGridLayout(images, layoutType, data);
         }
-      } else if (data.layout === "carousel") {
-        layout = createCarousel(images, data.showThumbnails !== false); // Default to showing thumbnails
+      } else if (data.layout) {
+        layout = createModernLayout(String(data.layout), images, data);
       }
 
       if (layout && block.parentElement) {

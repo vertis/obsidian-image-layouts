@@ -1,19 +1,25 @@
 import CarouselComponent from "../components/Carousel.svelte";
 import LayoutPickerComponent from "../components/LayoutPicker.svelte";
 import LegacyLayoutComponent from "../components/LegacyImageLayout.svelte";
+import LegacyMasonryLayout from "../components/LegacyMasonryLayout.svelte";
+import SwitchableLayout from "../components/SwitchableLayout.svelte";
 
-import { type MarkdownPostProcessorContext, MarkdownView } from "obsidian";
+import { type MarkdownPostProcessorContext, Notice } from "obsidian";
+import type { ComponentType } from "svelte";
 import {
   type ImageLayoutBlockOptions,
   type LayoutType,
+  type PickerChoice,
   layoutImages,
 } from "../interfaces";
 import type ImageLayoutsPlugin from "../main";
 import { collectBlockImages } from "../utils/block-images";
 import {
-  parseFrontMatterBlock,
-  stringifyFrontMatterBlock,
-} from "../utils/front-matter";
+  parseMasonryLayoutName,
+  updateLayoutInBlockSource,
+} from "../utils/blocks";
+import { writeBlockSource } from "../utils/editor-writeback";
+import { parseFrontMatterBlock } from "../utils/front-matter";
 import { normalizeAlign, normalizeDescriptions } from "../utils/options";
 import { resolveOverlayMode } from "../utils/overlay";
 import { resolvePlaceholderImage } from "../utils/placeholder";
@@ -42,55 +48,57 @@ export function renderImageLayoutComponent(
 
   // A non-string layout value (e.g. `layout: 1`) is treated as unset.
   const layout = typeof m.data?.layout === "string" ? m.data.layout : undefined;
+
+  const applyChoice = (choice: PickerChoice) => {
+    // Edits only the layout lines of the raw source, preserving the user's
+    // comments and formatting.
+    const newSource = updateLayoutInBlockSource(source, choice);
+    if (!writeBlockSource(plugin, ctx, parent, newSource)) {
+      new Notice("Image Layouts: the layout can't be changed in this view.");
+    }
+    // On success the editor change re-runs this processor with the new
+    // source, unmounting the picker and rendering the chosen layout.
+  };
+
   if (!m.data || !layout) {
     const picker = new LayoutPickerComponent({
       target: parent,
-      props: {},
+      props: { imageCount: readyImages.length },
     });
     ctx.addChild(new SvelteRenderChild(parent, picker));
-    picker.$on(
-      "layout-selected",
-      (
-        event: CustomEvent<{
-          type: LayoutType | "carousel";
-          params?: { showThumbnails?: boolean };
-        }>,
-      ) => {
-        const newData = m.data ?? {};
-        newData.layout = event.detail.type;
-        if (event.detail.params?.showThumbnails) {
-          newData.carouselShowThumbnails = true;
-        }
-        // view contains the editor to change the markdown
-        const view = plugin.app.workspace.getActiveViewOfType(MarkdownView);
-        // the context contains the begin and end of the block in the markdown file
-        const info = ctx.getSectionInfo(parent);
-
-        if (info) {
-          view?.editor.setSelection(
-            {
-              line: info.lineEnd,
-              ch: 0,
-            },
-            {
-              line: info.lineStart + 1,
-              ch: 0,
-            },
-          );
-          view?.editor.replaceSelection(
-            stringifyFrontMatterBlock(m.body, newData),
-          );
-        }
-        // The editor change makes Obsidian re-run this processor with the
-        // updated source, unmounting the picker and rendering the layout.
-      },
-    );
+    picker.$on("layout-selected", (event: CustomEvent<PickerChoice>) => {
+      applyChoice(event.detail);
+    });
     return;
   }
-  if (layout === "carousel") {
-    const carousel = new CarouselComponent({
+
+  const switchable = ctx.getSectionInfo(parent) !== null;
+  const mountSwitchable = (
+    component: ComponentType,
+    componentProps: Record<string, unknown>,
+    currentLayout: string,
+  ) => {
+    const wrapper = new SwitchableLayout({
       target: parent,
       props: {
+        component,
+        componentProps,
+        switchable,
+        imageCount: readyImages.length,
+        allowCarousel: true,
+        currentLayout,
+      },
+    });
+    wrapper.$on("apply-layout", (event: CustomEvent<PickerChoice>) => {
+      applyChoice(event.detail);
+    });
+    ctx.addChild(new SvelteRenderChild(parent, wrapper));
+  };
+
+  if (layout === "carousel") {
+    mountSwitchable(
+      CarouselComponent,
+      {
         images:
           readyImages.length > 0
             ? readyImages
@@ -101,10 +109,27 @@ export function renderImageLayoutComponent(
         background: m.data.carouselBackground,
         height: m.data.carouselHeight,
       },
-    });
-    ctx.addChild(new SvelteRenderChild(parent, carousel));
+      m.data.carouselShowThumbnails ? "carousel-thumbnails" : "carousel",
+    );
     return;
   }
+
+  const masonryColumns = parseMasonryLayoutName(layout);
+  if (masonryColumns !== null) {
+    mountSwitchable(
+      LegacyMasonryLayout,
+      {
+        caption: m.data.caption ?? "",
+        descriptions,
+        columns: masonryColumns,
+        images: readyImages,
+        overlayMode: resolveOverlayMode(m.data, plugin.settings),
+      },
+      layout,
+    );
+    return;
+  }
+
   // Accept both `layout: legacy-layout-a` and plain `layout: a`. Slicing the
   // prefix (rather than taking the last character) keeps `single` working.
   const layoutName = layout.startsWith(LEGACY_LAYOUT_PREFIX)
@@ -112,9 +137,9 @@ export function renderImageLayoutComponent(
     : layout;
   if (layoutImages[layoutName as LayoutType]) {
     const layoutType = layoutName as LayoutType;
-    const component = new LegacyLayoutComponent({
-      target: parent,
-      props: {
+    mountSwitchable(
+      LegacyLayoutComponent,
+      {
         caption: m.data.caption ?? "",
         descriptions,
         layout: layoutType,
@@ -126,7 +151,7 @@ export function renderImageLayoutComponent(
         width: m.data.width,
         placeholderUrl: resolvePlaceholderImage(plugin),
       },
-    });
-    ctx.addChild(new SvelteRenderChild(parent, component));
+      layoutType,
+    );
   }
 }
