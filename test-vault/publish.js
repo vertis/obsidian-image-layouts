@@ -1,4 +1,6 @@
-const h = {
+const $ = `data:image/svg+xml,${encodeURIComponent(
+  '<svg xmlns="http://www.w3.org/2000/svg" width="640" height="480"><rect width="100%" height="100%" fill="#88888822"/><circle cx="240" cy="170" r="36" fill="#88888855"/><path d="M120 360l110-140 80 95 60-60 130 105z" fill="#88888855"/></svg>'
+)}`, f = {
   a: 2,
   b: 2,
   c: 2,
@@ -9,94 +11,104 @@ const h = {
   h: 3,
   i: 4,
   single: 1
-}, f = (n) => {
-  const o = n.split(`
-`), e = {
+}, y = (n) => {
+  const t = n.split(`
+`), o = {
     data: {},
     content: n
   };
-  if (o[0] !== "---")
-    return e;
-  const t = o.slice(1).findIndex((l) => l === "---") + 1;
-  return t === 0 || (o.slice(1, t).join(`
+  if (t[0] !== "---")
+    return o;
+  const e = t.slice(1).findIndex((l) => l === "---") + 1;
+  if (e === 0)
+    return o;
+  const a = t.slice(1, e).join(`
 `).split(`
-`).forEach((l) => {
-    const [d, ...p] = l.split(":").map((u) => u.trim()), m = p.join(":").trim().replace(/^"(.*)"$/, "$1").replace(/^'(.*)'$/, "$1");
-    d && m && (m === "true" ? e.data[d] = !0 : m === "false" ? e.data[d] = !1 : e.data[d] = m);
-  }), e.content = o.slice(t + 1).join(`
-`)), e;
-}, k = (n) => {
-  const o = n.match(/\[([^\]]*)\]\(([^\(]*)\)/);
-  if (o) {
-    const [e, t, s] = o;
-    return { url: s, alt: t };
+`);
+  for (let l = 0; l < a.length; l++) {
+    const c = a[l], [i, ...d] = c.split(":").map((r) => r.trim()), m = d.join(":").trim().replace(/^"(.*)"$/, "$1").replace(/^'(.*)'$/, "$1");
+    if (i && /^[|>][+-]?\d*$/.test(m)) {
+      const r = [];
+      for (; l + 1 < a.length && (/^\s/.test(a[l + 1]) || a[l + 1] === ""); )
+        l++, r.push(a[l].trim());
+      o.data[i] = r.join(`
+`);
+      continue;
+    }
+    i && m && (m === "true" ? o.data[i] = !0 : m === "false" ? o.data[i] = !1 : o.data[i] = m);
+  }
+  return o.content = t.slice(e + 1).join(`
+`), o;
+}, M = (n) => {
+  const t = n.match(/\[([^\]]*)\]\(([^\(]*)\)/);
+  if (t) {
+    const [o, e, s] = t;
+    return { url: s, alt: e };
   }
   return null;
-}, y = (n) => n.split(`
-`).filter((t) => t.startsWith("!")).map((t) => k(t.slice(1))).filter((t) => t !== null);
+}, v = (n) => n.split(`
+`).filter((e) => e.startsWith("!")).map((e) => M(e.slice(1))).filter((e) => e !== null);
 console.log("Image Layouts loading...");
-function v(n, o, e) {
-  const t = document.createElement("div");
-  t.className = `image-layouts image-layouts-grid image-layouts-layout-${o}`;
-  const s = h[o];
-  if ((n.length < s ? [
+function k(n, t) {
+  return n.length < t ? [
     ...n,
-    ...Array(s - n.length).fill({
-      url: "https://via.placeholder.com/640x480"
-    })
-  ] : n.slice(0, s)).forEach((l, d) => {
-    var u;
-    const p = document.createElement("div");
-    p.className = `group relative image-layouts-image-${d}`;
-    const m = document.createElement("img");
-    if (m.src = l.url, m.alt = l.alt || `Image ${d + 1}`, m.className = "w-full h-full object-cover object-center", l.alt || e.descriptions && e.descriptions[d]) {
-      const c = ((u = e.descriptions) == null ? void 0 : u[d]) || l.alt, r = document.createElement("div");
-      r.className = "absolute bottom-0 left-0 right-0 flex items-end p-4", r.setAttribute("aria-hidden", "true"), e.permanentOverlay || r.classList.add("opacity-0", "group-hover:opacity-100");
-      const i = document.createElement("div");
-      i.className = "w-full rounded-md bg-white bg-opacity-75 px-4 py-2 text-center text-sm font-medium text-gray-900 backdrop-blur backdrop-filter", i.textContent = c, r.appendChild(i), p.appendChild(r);
-    }
-    p.appendChild(m), t.appendChild(p);
-  }), e.caption) {
-    const l = document.createElement("div");
-    l.className = "text-center mt-2 text-sm text-gray-600", l.textContent = e.caption, t.appendChild(l);
-  }
-  return t;
+    ...Array(t - n.length).fill({ url: $ })
+  ] : n.slice(0, t);
 }
-function b(n, o, e) {
-  const t = document.createElement("div");
-  t.className = `image-layouts-masonry-grid-${o}`;
-  const s = Array(o).fill(null).map(() => {
+function w(n, t, o) {
+  var l;
+  const e = document.createElement("div");
+  e.className = "group relative";
+  const s = document.createElement("img");
+  s.src = n.url, s.alt = n.alt || `Image ${t + 1}`, s.className = "w-full h-full object-cover object-center";
+  const a = ((l = o.descriptions) == null ? void 0 : l[t]) || n.alt;
+  if (a) {
+    const c = document.createElement("div");
+    c.className = "absolute bottom-0 left-0 right-0 flex items-end p-4", c.setAttribute("aria-hidden", "true"), o.permanentOverlay || c.classList.add("opacity-0", "group-hover:opacity-100");
+    const i = document.createElement("div");
+    i.className = "w-full rounded-md bg-white bg-opacity-75 px-4 py-2 text-center text-sm font-medium text-gray-900 backdrop-blur backdrop-filter", i.textContent = a, c.appendChild(i), e.appendChild(c);
+  }
+  return e.appendChild(s), e;
+}
+function C(n, t) {
+  if (!t.caption)
+    return n;
+  const o = document.createElement("div");
+  o.appendChild(n);
+  const e = document.createElement("div");
+  return e.className = "text-center mt-2 text-sm text-gray-600", e.textContent = t.caption, o.appendChild(e), o;
+}
+function b(n, t, o) {
+  const e = document.createElement("div");
+  return e.className = `image-layouts image-layouts-grid image-layouts-layout-${t}`, k(n, f[t]).forEach((a, l) => {
+    const c = w(a, l, o);
+    c.classList.add(`image-layouts-image-${l}`), e.appendChild(c);
+  }), C(e, o);
+}
+function E(n, t, o) {
+  const e = document.createElement("div");
+  e.className = `image-layouts-masonry-grid-${t}`;
+  const s = Array(t).fill(null).map(() => {
     const a = document.createElement("div");
     return a.className = "image-layouts-masonry-column", a;
   });
-  if (n.forEach((a, l) => {
-    var u;
-    const d = l % o, p = document.createElement("div");
-    p.className = "group relative";
-    const m = document.createElement("img");
-    if (m.src = a.url, m.alt = a.alt || `Image ${l + 1}`, m.className = "w-full h-full object-cover object-center", a.alt || e.descriptions && e.descriptions[l]) {
-      const c = ((u = e.descriptions) == null ? void 0 : u[l]) || a.alt, r = document.createElement("div");
-      r.className = "absolute bottom-0 left-0 right-0 flex items-end p-4", r.setAttribute("aria-hidden", "true"), e.permanentOverlay || r.classList.add("opacity-0", "group-hover:opacity-100");
-      const i = document.createElement("div");
-      i.className = "w-full rounded-md bg-white bg-opacity-75 px-4 py-2 text-center text-sm font-medium text-gray-900 backdrop-blur backdrop-filter", i.textContent = c, r.appendChild(i), p.appendChild(r);
-    }
-    p.appendChild(m), s[d].appendChild(p);
-  }), s.forEach((a) => t.appendChild(a)), e.caption) {
-    const a = document.createElement("div");
-    a.className = "text-center mt-2 text-sm text-gray-600", a.textContent = e.caption, t.appendChild(a);
-  }
-  return t;
+  return n.forEach((a, l) => {
+    const c = l % t;
+    s[c].appendChild(
+      w(a, l, o)
+    );
+  }), s.forEach((a) => e.appendChild(a)), C(e, o);
 }
-function w(n, o) {
+function T(n, t) {
+  const o = document.createElement("div");
+  o.className = "image-layout-carousel";
   const e = document.createElement("div");
-  e.className = "image-layout-carousel";
-  const t = document.createElement("div");
-  t.className = "slides-container";
-  for (const [c, r] of n.entries()) {
-    const i = document.createElement("div");
-    i.className = `slide${c === 0 ? " active" : ""}`;
-    const g = document.createElement("img");
-    g.src = r.url, g.alt = r.alt || `Image ${c + 1}`, i.appendChild(g), t.appendChild(i);
+  e.className = "slides-container";
+  for (const [r, g] of n.entries()) {
+    const u = document.createElement("div");
+    u.className = `slide${r === 0 ? " active" : ""}`;
+    const p = document.createElement("img");
+    p.src = g.url, p.alt = g.alt || `Image ${r + 1}`, u.appendChild(p), e.appendChild(u);
   }
   const s = document.createElement("button");
   s.className = "nav-button prev", s.innerHTML = `
@@ -111,79 +123,121 @@ function w(n, o) {
     </svg>
   `;
   let l = 0;
-  function d(c) {
-    const r = Array.from(
-      t.getElementsByClassName("slide")
+  function c(r) {
+    const g = Array.from(
+      e.getElementsByClassName("slide")
     );
-    if (r[l].classList.remove("active"), r[c].classList.add("active"), u) {
-      const i = Array.from(
-        u.getElementsByTagName("img")
+    if (g[l].classList.remove("active"), g[r].classList.add("active"), m) {
+      const u = Array.from(
+        m.getElementsByTagName("img")
       );
-      i[l].classList.remove("active"), i[c].classList.add("active"), i[c].scrollIntoView({
+      u[l].classList.remove("active"), u[r].classList.add("active"), u[r].scrollIntoView({
         behavior: "smooth",
         block: "nearest",
         inline: "center"
       });
     }
-    l = c;
+    l = r;
   }
-  function p() {
-    const c = (l + 1) % n.length;
-    d(c);
+  function i() {
+    const r = (l + 1) % n.length;
+    c(r);
   }
-  function m() {
-    const c = (l - 1 + n.length) % n.length;
-    d(c);
+  function d() {
+    const r = (l - 1 + n.length) % n.length;
+    c(r);
   }
-  a.onclick = p, s.onclick = m, e.tabIndex = 0, e.onkeydown = (c) => {
-    c.key === "ArrowLeft" && m(), c.key === "ArrowRight" && p();
+  a.onclick = i, s.onclick = d, o.tabIndex = 0, o.onkeydown = (r) => {
+    r.key === "ArrowLeft" && d(), r.key === "ArrowRight" && i();
   };
-  let u;
-  if (o) {
-    u = document.createElement("div"), u.className = "thumbnails-container";
-    for (let c = 0; c < n.length; c++) {
-      const r = document.createElement("div");
-      r.className = "thumbnail-item";
-      const i = document.createElement("img");
-      i.src = n[c].url, i.alt = n[c].alt || `Thumbnail ${c + 1}`, c === 0 && i.classList.add("active"), i.onclick = () => d(c), r.appendChild(i), u.appendChild(r);
+  let m;
+  if (t) {
+    m = document.createElement("div"), m.className = "thumbnails-container";
+    for (let r = 0; r < n.length; r++) {
+      const g = document.createElement("div");
+      g.className = "thumbnail-item";
+      const u = document.createElement("img");
+      u.src = n[r].url, u.alt = n[r].alt || `Thumbnail ${r + 1}`, r === 0 && u.classList.add("active"), u.onclick = () => c(r), g.appendChild(u), m.appendChild(g);
     }
   }
-  return e.appendChild(t), e.appendChild(s), e.appendChild(a), u && e.appendChild(u), e;
+  return o.appendChild(e), o.appendChild(s), o.appendChild(a), m && o.appendChild(m), o;
 }
-publish.registerMarkdownCodeBlockProcessor("image-layout", (n, o) => {
+publish.registerMarkdownCodeBlockProcessor("image-layout", (n, t) => {
   console.log("Processing image-layout block:", { source: n });
-  const { data: e, content: t } = f(n), s = y(t);
-  if (!e.layout) {
+  const { data: o, content: e } = y(n), s = v(e);
+  if (!o.layout) {
     console.error("No layout specified in front matter");
     return;
   }
-  for (console.log("Parsed config:", { data: e, images: s }); o.firstChild; )
-    o.removeChild(o.firstChild);
-  const a = C(String(e.layout), s, e);
-  a && o.appendChild(a);
+  for (console.log("Parsed config:", { data: o, images: s }); t.firstChild; )
+    t.removeChild(t.firstChild);
+  const a = x(String(o.layout), s, o);
+  a && t.appendChild(a);
 });
-function C(n, o, e) {
-  const t = n.startsWith("legacy-layout-") ? n.slice(14) : n.startsWith("legacy-masonry-") ? `masonry-${n.slice(15)}` : n;
-  if (t === "carousel")
-    return w(o, e.showThumbnails !== !1);
-  const s = t.match(/^masonry-([2-6])$/);
-  return s ? b(o, parseInt(s[1]), e) : h[t] ? v(o, t, e) : null;
+function x(n, t, o) {
+  const e = n.startsWith("legacy-layout-") ? n.slice(14) : n.startsWith("legacy-masonry-") ? `masonry-${n.slice(15)}` : n;
+  if (e === "carousel")
+    return T(t, o.showThumbnails !== !1);
+  if (e === "custom")
+    return A(t, String(o.grid ?? ""), o);
+  const s = e.match(/^masonry-([2-6])$/);
+  return s ? E(t, parseInt(s[1]), o) : f[e] ? b(t, e, o) : null;
 }
-Object.keys(h).forEach((n) => {
+function h(n) {
+  const t = document.createElement("div");
+  return t.className = "image-layouts-error", t.style.cssText = "color: #888; font-size: 0.85em; padding: 0.5rem; border: 1px dashed #8886; border-radius: 6px; white-space: pre-wrap;", t.textContent = `Image Layouts: ${n}`, t;
+}
+function A(n, t, o) {
+  const e = t.split(`
+`).map((i) => i.trim()).filter((i) => i !== "").map((i) => i.split(/\s+/));
+  if (e.length === 0)
+    return h("A custom layout needs a `grid` option.");
+  const s = e[0].length;
+  if (e.some((i) => i.length !== s))
+    return h(
+      "Every row in `grid` must have the same number of cells."
+    );
+  const a = [];
+  for (const i of e)
+    for (const d of i)
+      d !== "." && !a.includes(d) && a.push(d);
+  if (a.length === 0)
+    return h("The `grid` needs at least one image cell.");
+  if (a.length > 20)
+    return h("`grid` supports up to 20 images.");
+  for (const i of a) {
+    let d = Number.POSITIVE_INFINITY, m = -1, r = Number.POSITIVE_INFINITY, g = -1, u = 0;
+    for (const [p, N] of e.entries())
+      for (const [I, L] of N.entries())
+        L === i && (d = Math.min(d, p), m = Math.max(m, p), r = Math.min(r, I), g = Math.max(g, I), u++);
+    if (u !== (m - d + 1) * (g - r + 1))
+      return h(
+        `The cells for "${i}" must form a solid rectangle.`
+      );
+  }
+  const l = document.createElement("div");
+  return l.className = "image-layouts image-layouts-grid", l.style.display = "grid", l.style.gap = "0.5rem", l.style.gridTemplateColumns = `repeat(${s}, 1fr)`, l.style.gridTemplateAreas = e.map(
+    (i) => `"${i.map((d) => d === "." ? "." : `image-${a.indexOf(d)}`).join(" ")}"`
+  ).join(" "), k(n, a.length).forEach((i, d) => {
+    const m = w(i, d, o);
+    m.style.gridArea = `image-${d}`, l.appendChild(m);
+  }), C(l, o);
+}
+Object.keys(f).forEach((n) => {
   publish.registerMarkdownCodeBlockProcessor(
     `image-layout-${n}`,
-    (o, e) => {
-      const { data: t, content: s } = f(o), a = y(s), l = v(a, n, t);
-      e.replaceChildren(l);
+    (t, o) => {
+      const { data: e, content: s } = y(t), a = v(s), l = b(a, n, e);
+      o.replaceChildren(l);
     }
   );
 });
 for (let n = 2; n <= 6; n++)
   publish.registerMarkdownCodeBlockProcessor(
     `image-layout-masonry-${n}`,
-    (o, e) => {
-      const { data: t, content: s } = f(o), a = y(s), l = b(a, n, t);
-      e.replaceChildren(l);
+    (t, o) => {
+      const { data: e, content: s } = y(t), a = v(s), l = E(a, n, e);
+      o.replaceChildren(l);
     }
   );
 console.log("Image Layouts loaded");
@@ -191,19 +245,19 @@ document.addEventListener("DOMContentLoaded", () => {
   console.log("Processing existing image-layout blocks");
   const n = document.querySelectorAll("pre > code.language-image-layout");
   console.log("Found blocks:", n.length);
-  for (const o of n) {
-    const e = o.textContent || "", { data: t, content: s } = f(e), a = y(s);
-    if (console.log("Processing block:", { data: t, images: a }), a.length > 0) {
+  for (const t of n) {
+    const o = t.textContent || "", { data: e, content: s } = y(o), a = v(s);
+    if (console.log("Processing block:", { data: e, images: a }), a.length > 0) {
       let l;
-      if (o.className.includes("language-image-layout-masonry-")) {
-        const d = parseInt(o.className.split("-").pop() || "2");
-        l = b(a, d, t);
-      } else if (o.className.includes("language-image-layout-")) {
-        const d = o.className.split("-").pop();
-        h[d] && (l = v(a, d, t));
+      if (t.className.includes("language-image-layout-masonry-")) {
+        const c = parseInt(t.className.split("-").pop() || "2");
+        l = E(a, c, e);
+      } else if (t.className.includes("language-image-layout-")) {
+        const c = t.className.split("-").pop();
+        f[c] && (l = b(a, c, e));
       } else
-        t.layout && (l = C(String(t.layout), a, t));
-      l && o.parentElement && (console.log("Replacing block with layout"), o.parentElement.replaceWith(l));
+        e.layout && (l = x(String(e.layout), a, e));
+      l && t.parentElement && (console.log("Replacing block with layout"), t.parentElement.replaceWith(l));
     }
   }
 });

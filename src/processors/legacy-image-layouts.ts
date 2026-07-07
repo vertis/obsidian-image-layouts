@@ -106,6 +106,7 @@ export function renderLegacyLayoutComponent(
       switchable: ctx.getSectionInfo(parent) !== null,
       imageCount: readyImages.length,
       allowCarousel: false,
+      allowCustom: false,
       currentLayout: fenceLayout,
     },
   });

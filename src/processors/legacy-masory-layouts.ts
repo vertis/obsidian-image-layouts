@@ -44,6 +44,7 @@ export function renderLegacyMasonryLayoutComponent(
       switchable: ctx.getSectionInfo(parent) !== null,
       imageCount: readyImages.length,
       allowCarousel: false,
+      allowCustom: false,
       currentLayout: `masonry-${columns}`,
     },
   });

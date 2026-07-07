@@ -11,8 +11,9 @@
   // many are highlighted.
   export let imageCount: number = 0;
   // Legacy blocks can only be renamed to other legacy fences, which have no
-  // carousel form.
+  // carousel or custom form.
   export let allowCarousel: boolean = true;
+  export let allowCustom: boolean = true;
   // Set when switching an existing block, to mark the current layout.
   export let currentLayout: string | undefined = undefined;
   export let showCancel: boolean = false;
@@ -65,6 +66,19 @@
         >
       </button>
     {/each}
+    {#if allowCustom}
+      <button
+        type="button"
+        class="tile"
+        class:current={currentLayout === "custom"}
+        aria-label="Custom grid layout"
+        title="Design your own grid with rows of letters"
+        on:click={() => select("custom")}
+      >
+        <LayoutSchematic custom={true} />
+        <span class="tile-label">custom</span>
+      </button>
+    {/if}
   </div>
 
   <div class="picker-section">Masonry</div>
