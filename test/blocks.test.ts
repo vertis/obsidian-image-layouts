@@ -119,3 +119,19 @@ test("buildLayoutBlock lengthens its fence past backtick runs in the content", (
   expect(block.startsWith("````image-layout\n")).toBe(true);
   expect(block.endsWith("\n````\n")).toBe(true);
 });
+
+test("updateLayoutInBlockSource seeds a starter grid when picking custom", () => {
+  expect(updateLayoutInBlockSource("![[a.jpg]]\n", { type: "custom" })).toBe(
+    "---\nlayout: custom\ngrid: |\n  A A B\n  A A C\n---\n![[a.jpg]]\n",
+  );
+  expect(
+    updateLayoutInBlockSource("---\ncaption: Hi\n---\n", { type: "custom" }),
+  ).toBe("---\ncaption: Hi\nlayout: custom\ngrid: |\n  A A B\n  A A C\n---\n");
+});
+
+test("updateLayoutInBlockSource keeps an existing grid when picking custom", () => {
+  const source = "---\nlayout: a\ngrid: |\n  X X\n  Y Z\n---\n![[a.jpg]]\n";
+  expect(updateLayoutInBlockSource(source, { type: "custom" })).toBe(
+    "---\nlayout: custom\ngrid: |\n  X X\n  Y Z\n---\n![[a.jpg]]\n",
+  );
+});

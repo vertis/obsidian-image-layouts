@@ -19,6 +19,7 @@ type LayoutType =
 type FrontMatter = {
   type?: string;
   layout?: string;
+  grid?: string;
   showThumbnails?: boolean;
   caption?: string;
   descriptions?: string[];
@@ -64,7 +65,8 @@ const parseFrontMatter = (
   const frontMatter = lines.slice(1, endIndex).join("\n");
   const frontMatterLines = frontMatter.split("\n");
 
-  frontMatterLines.forEach((line) => {
+  for (let i = 0; i < frontMatterLines.length; i++) {
+    const line = frontMatterLines[i];
     const [key, ...valueParts] = line.split(":").map((part) => part.trim());
     // Strip surrounding quotes so YAML like `layout: "carousel"` (as the
     // in-app layout picker writes) parses the same as `layout: carousel`.
@@ -74,12 +76,26 @@ const parseFrontMatter = (
       .replace(/^"(.*)"$/, "$1")
       .replace(/^'(.*)'$/, "$1");
 
+    // Block scalars (`grid: |`): consume the following indented lines.
+    if (key && (value === "|" || value === ">")) {
+      const blockLines: string[] = [];
+      while (
+        i + 1 < frontMatterLines.length &&
+        (/^\s/.test(frontMatterLines[i + 1]) || frontMatterLines[i + 1] === "")
+      ) {
+        i++;
+        blockLines.push(frontMatterLines[i].trim());
+      }
+      result.data[key] = blockLines.join("\n");
+      continue;
+    }
+
     if (key && value) {
       if (value === "true") result.data[key] = true;
       else if (value === "false") result.data[key] = false;
       else result.data[key] = value;
     }
-  });
+  }
 
   // Extract the content after front matter
   result.content = lines.slice(endIndex + 1).join("\n");
@@ -406,6 +422,9 @@ function createModernLayout(
   if (normalized === "carousel") {
     return createCarousel(images, data.showThumbnails !== false); // Default to showing thumbnails
   }
+  if (normalized === "custom") {
+    return createCustomGridLayout(images, String(data.grid ?? ""), data);
+  }
   const masonry = normalized.match(/^masonry-([2-6])$/);
   if (masonry) {
     return createMasonryLayout(images, parseInt(masonry[1]), data);
@@ -414,6 +433,78 @@ function createModernLayout(
     return createLegacyGridLayout(images, normalized as LayoutType, data);
   }
   return null;
+}
+
+// Renders `layout: custom` blocks: rows of whitespace-separated tokens map
+// to CSS grid-template-areas; "." leaves a cell empty. Mirrors
+// src/utils/custom-grid.ts in the plugin.
+function createCustomGridLayout(
+  images: ImageLink[],
+  gridSpec: string,
+  config: FrontMatter
+): HTMLElement | null {
+  const rows = gridSpec
+    .split("\n")
+    .map((line) => line.trim())
+    .filter((line) => line !== "")
+    .map((line) => line.split(/\s+/));
+  if (rows.length === 0) return null;
+  const columns = rows[0].length;
+  if (rows.some((row) => row.length !== columns)) return null;
+
+  const order: string[] = [];
+  for (const row of rows) {
+    for (const cell of row) {
+      if (cell !== "." && !order.includes(cell)) order.push(cell);
+    }
+  }
+  if (order.length === 0) return null;
+
+  const container = document.createElement("div");
+  container.className = "image-layouts image-layouts-grid";
+  container.style.display = "grid";
+  container.style.gap = "0.5rem";
+  container.style.gridTemplateColumns = `repeat(${columns}, 1fr)`;
+  container.style.gridTemplateAreas = rows
+    .map(
+      (row) =>
+        `"${row
+          .map((cell) => (cell === "." ? "." : `image-${order.indexOf(cell)}`))
+          .join(" ")}"`
+    )
+    .join(" ");
+
+  const displayImages =
+    images.length < order.length
+      ? [
+          ...images,
+          ...Array(order.length - images.length).fill({
+            url: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='640' height='480'%3E%3Crect width='100%25' height='100%25' fill='%2388888822'/%3E%3C/svg%3E",
+          }),
+        ]
+      : images.slice(0, order.length);
+
+  displayImages.forEach((image, index) => {
+    const wrapper = document.createElement("div");
+    wrapper.className = "group relative";
+    wrapper.style.gridArea = `image-${index}`;
+
+    const img = document.createElement("img");
+    img.src = image.url;
+    img.alt = image.alt || `Image ${index + 1}`;
+    img.className = "w-full h-full object-cover object-center";
+    wrapper.appendChild(img);
+    container.appendChild(wrapper);
+  });
+
+  if (config.caption) {
+    const caption = document.createElement("div");
+    caption.className = "text-center mt-2 text-sm text-gray-600";
+    caption.textContent = config.caption;
+    container.appendChild(caption);
+  }
+
+  return container;
 }
 
 // Register legacy layout processors for backward compatibility

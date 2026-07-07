@@ -8,6 +8,9 @@
   export let overlayMode: OverlayMode = "hover";
   export let fit: FitMode = "cover";
   export let width: number | undefined = undefined;
+  // Custom layouts place images by inline grid-area (the class-based areas
+  // below only exist for indexes 0-6).
+  export let gridArea: string | undefined = undefined;
 </script>
 
 <div
@@ -15,6 +18,7 @@
   class:fit-contain={fit === "contain"}
   class:fit-natural={fit === "natural"}
   style:max-width={width ? `${width}px` : undefined}
+  style:grid-area={gridArea}
 >
   <img {src} alt={description ?? `Image ${index + 1}`} />
   {#if description && overlayMode !== "never"}

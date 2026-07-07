@@ -1,4 +1,5 @@
 import CarouselComponent from "../components/Carousel.svelte";
+import CustomGridLayout from "../components/CustomGridLayout.svelte";
 import LayoutPickerComponent from "../components/LayoutPicker.svelte";
 import LegacyLayoutComponent from "../components/LegacyImageLayout.svelte";
 import LegacyMasonryLayout from "../components/LegacyMasonryLayout.svelte";
@@ -18,6 +19,7 @@ import {
   parseMasonryLayoutName,
   updateLayoutInBlockSource,
 } from "../utils/blocks";
+import { parseCustomGrid } from "../utils/custom-grid";
 import { writeBlockSource } from "../utils/editor-writeback";
 import { parseFrontMatterBlock } from "../utils/front-matter";
 import { normalizeAlign, normalizeDescriptions } from "../utils/options";
@@ -110,6 +112,33 @@ export function renderImageLayoutComponent(
         height: m.data.carouselHeight,
       },
       m.data.carouselShowThumbnails ? "carousel-thumbnails" : "carousel",
+    );
+    return;
+  }
+
+  if (layout === "custom") {
+    const parsed = parseCustomGrid(m.data.grid);
+    if (parsed.error) {
+      const errorEl = parent.createDiv({ cls: "image-layouts-error" });
+      errorEl.setText(`Image Layouts: ${parsed.error}`);
+      errorEl.setAttr(
+        "style",
+        "color: var(--text-muted); font-size: 0.85em; padding: 0.5rem; border: 1px dashed var(--background-modifier-border); border-radius: 6px; white-space: pre-wrap;",
+      );
+      return;
+    }
+    mountSwitchable(
+      CustomGridLayout,
+      {
+        grid: parsed.grid,
+        images: readyImages,
+        caption: m.data.caption ?? "",
+        descriptions,
+        overlayMode: resolveOverlayMode(m.data, plugin.settings),
+        fit: m.data.fit,
+        placeholderUrl: resolvePlaceholderImage(plugin),
+      },
+      "custom",
     );
     return;
   }

@@ -8,8 +8,8 @@ a change-layout button on hover to reopen the picker. There is also an
 current selection.
 
 The modern `image-layout` block accepts `layout: a` … `layout: i`,
-`layout: single`, `layout: masonry-2` … `layout: masonry-6`, or
-`layout: carousel`.
+`layout: single`, `layout: masonry-2` … `layout: masonry-6`,
+`layout: carousel`, or `layout: custom`.
 
 Every layout block accepts options as YAML front matter inside the codeblock:
 
@@ -77,6 +77,30 @@ shorthands for a single image aligned to that side:
 
 Per-image captions (from `![[image.jpg|caption]]`, markdown alt text, or
 `descriptions`) are shown under the current slide.
+
+## Custom layouts (`layout: custom`)
+
+Design your own grid with rows of letters — equal letters merge into one
+region, `.` leaves a cell empty, and letters map to your images in order of
+first appearance:
+
+````
+```image-layout
+---
+layout: custom
+grid: |
+  A A B
+  A A C
+---
+![[hero.jpg]]
+![[detail-1.jpg]]
+![[detail-2.jpg]]
+```
+````
+
+Rows must all have the same number of cells and each letter's cells must form
+a solid rectangle (that's a CSS grid rule). Custom layouts support `caption`,
+`descriptions`, `overlay`, `fit`, and `fromFolder` like any grid.
 
 ## Populating from a folder
 

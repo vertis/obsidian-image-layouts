@@ -1,4 +1,5 @@
 import type { PickerChoice } from "../interfaces";
+import { STARTER_GRID_LINES } from "./custom-grid";
 
 // `layout: masonry-3` → 3; null for anything that isn't a masonry layout name.
 export const parseMasonryLayoutName = (layout: string): number | null => {
@@ -62,15 +63,26 @@ export const updateLayoutInBlockSource = (
       } else if (choice.type === "carousel" && thumbnailsIndex >= 0) {
         inner.splice(thumbnailsIndex, 1);
       }
+      // Picking Custom seeds a starter grid to edit, unless one exists.
+      if (
+        choice.type === "custom" &&
+        !inner.some((line) => /^\s*grid\s*:/.test(line))
+      ) {
+        inner.push(...STARTER_GRID_LINES);
+      }
       const rest = lines.slice(end + 1).join("\n");
       return `---\n${inner.join("\n")}\n---\n${rest}`;
     }
   }
-  const frontMatter = wantThumbnails
-    ? `---\n${layoutLine}\n${thumbnailsLine}\n---\n`
-    : `---\n${layoutLine}\n---\n`;
+  const frontMatterLines = [layoutLine];
+  if (wantThumbnails) {
+    frontMatterLines.push(thumbnailsLine);
+  }
+  if (choice.type === "custom") {
+    frontMatterLines.push(...STARTER_GRID_LINES);
+  }
   const body = source === "" || source.endsWith("\n") ? source : `${source}\n`;
-  return frontMatter + body;
+  return `---\n${frontMatterLines.join("\n")}\n---\n${body}`;
 };
 
 // Builds a complete modern image-layout codeblock for the insert command.

@@ -9,6 +9,7 @@
   export let switchable: boolean = false;
   export let imageCount: number = 0;
   export let allowCarousel: boolean = true;
+  export let allowCustom: boolean = true;
   export let currentLayout: string | undefined = undefined;
 
   const dispatch = createEventDispatcher();
@@ -24,6 +25,7 @@
   <LayoutPicker
     {imageCount}
     {allowCarousel}
+    {allowCustom}
     {currentLayout}
     showCancel={true}
     on:layout-selected={apply}
