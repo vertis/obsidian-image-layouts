@@ -49,7 +49,11 @@ export default class ImageLayoutsPlugin extends Plugin {
         const selection = editor.getSelection();
         const imageCount = getImages(selection).length;
         new ImageLayoutPickerModal(this.app, imageCount, (choice) => {
-          editor.replaceSelection(buildLayoutBlock(choice, selection));
+          // A fence that starts mid-line isn't parsed as a codeblock.
+          const from = editor.getCursor("from");
+          const beforeCursor = editor.getLine(from.line).slice(0, from.ch);
+          const prefix = beforeCursor.trim() === "" ? "" : "\n";
+          editor.replaceSelection(prefix + buildLayoutBlock(choice, selection));
         }).open();
       },
     });

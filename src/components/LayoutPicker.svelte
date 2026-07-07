@@ -51,8 +51,12 @@
         type="button"
         class="tile"
         class:fits={imageCount > 0 && layoutImages[layout] === imageCount}
+        class:over={imageCount > 0 && layoutImages[layout] < imageCount}
         class:current={currentLayout === layout}
         aria-label={`Grid layout ${layout} (${layoutImages[layout]} images)`}
+        title={imageCount > layoutImages[layout]
+          ? `Shows the first ${layoutImages[layout]} of your ${imageCount} images`
+          : undefined}
         on:click={() => select(layout)}
       >
         <LayoutSchematic grid={layout} />
@@ -95,6 +99,7 @@
       <button
         type="button"
         class="tile"
+        class:current={currentLayout === "carousel-thumbnails"}
         aria-label="Carousel with thumbnails"
         on:click={() => select("carousel", { showThumbnails: true })}
       >
@@ -191,6 +196,16 @@
   .tile.current {
     border-style: dashed;
     border-color: var(--text-muted);
+  }
+
+  /* Grids that can't show every image in the block are dimmed; the title
+     attribute explains what would be hidden. */
+  .tile.over {
+    opacity: 0.55;
+  }
+
+  .tile.over:hover {
+    opacity: 1;
   }
 
   .tile-label {

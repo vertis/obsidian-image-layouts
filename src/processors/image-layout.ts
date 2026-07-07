@@ -14,8 +14,11 @@ import {
 } from "../interfaces";
 import type ImageLayoutsPlugin from "../main";
 import { collectBlockImages } from "../utils/block-images";
-import { parseMasonryLayoutName } from "../utils/blocks";
-import { writeBlockData } from "../utils/editor-writeback";
+import {
+  parseMasonryLayoutName,
+  updateLayoutInBlockSource,
+} from "../utils/blocks";
+import { writeBlockSource } from "../utils/editor-writeback";
 import { parseFrontMatterBlock } from "../utils/front-matter";
 import { normalizeAlign, normalizeDescriptions } from "../utils/options";
 import { resolveOverlayMode } from "../utils/overlay";
@@ -47,24 +50,10 @@ export function renderImageLayoutComponent(
   const layout = typeof m.data?.layout === "string" ? m.data.layout : undefined;
 
   const applyChoice = (choice: PickerChoice) => {
-    const newData: ImageLayoutBlockOptions = { ...(m.data ?? {}) };
-    newData.layout = choice.type;
-    if (choice.type === "carousel") {
-      if (choice.params?.showThumbnails) {
-        newData.carouselShowThumbnails = true;
-      } else {
-        newData.carouselShowThumbnails = undefined;
-      }
-    }
-    if (
-      !writeBlockData(
-        plugin,
-        ctx,
-        parent,
-        m.body,
-        newData as Record<string, unknown>,
-      )
-    ) {
+    // Edits only the layout lines of the raw source, preserving the user's
+    // comments and formatting.
+    const newSource = updateLayoutInBlockSource(source, choice);
+    if (!writeBlockSource(plugin, ctx, parent, newSource)) {
       new Notice("Image Layouts: the layout can't be changed in this view.");
     }
     // On success the editor change re-runs this processor with the new
@@ -120,7 +109,7 @@ export function renderImageLayoutComponent(
         background: m.data.carouselBackground,
         height: m.data.carouselHeight,
       },
-      "carousel",
+      m.data.carouselShowThumbnails ? "carousel-thumbnails" : "carousel",
     );
     return;
   }
