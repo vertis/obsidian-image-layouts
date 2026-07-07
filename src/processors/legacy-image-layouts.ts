@@ -1,13 +1,16 @@
-import type { MarkdownPostProcessorContext } from "obsidian";
+import { type MarkdownPostProcessorContext, Notice } from "obsidian";
 import LayoutComponent from "../components/LegacyImageLayout.svelte";
+import SwitchableLayout from "../components/SwitchableLayout.svelte";
 import {
   type AlignMode,
   type LayoutBlockOptions,
   type LayoutType,
+  type PickerChoice,
   layoutImages,
 } from "../interfaces";
 import type ImageLayoutsPlugin from "../main";
 import { collectBlockImages } from "../utils/block-images";
+import { renameFenceLayout } from "../utils/editor-writeback";
 import { parseFrontMatterBlock } from "../utils/front-matter";
 import { normalizeAlign, normalizeDescriptions } from "../utils/options";
 import { resolveOverlayMode } from "../utils/overlay";
@@ -55,6 +58,19 @@ export function addLegacyImageLayoutMarkdownProcessors(
   }
 }
 
+// Legacy blocks encode the layout in the fence name, so applying a picker
+// choice means renaming the fence token; the fences have no carousel form.
+export function applyLegacyPickerChoice(
+  plugin: ImageLayoutsPlugin,
+  ctx: MarkdownPostProcessorContext,
+  parent: HTMLElement,
+  choice: PickerChoice,
+) {
+  if (!renameFenceLayout(plugin, ctx, parent, choice.type)) {
+    new Notice("Image Layouts: the layout can't be changed in this view.");
+  }
+}
+
 export function renderLegacyLayoutComponent(
   source: string,
   parent: HTMLElement,
@@ -66,20 +82,30 @@ export function renderLegacyLayoutComponent(
   const m = parseFrontMatterBlock<LayoutBlockOptions>(source);
   const readyImages = collectBlockImages(m.data, m.body, ctx, plugin);
 
-  const component = new LayoutComponent({
+  const wrapper = new SwitchableLayout({
     target: parent,
     props: {
-      caption: m.data?.caption ?? "",
-      descriptions: normalizeDescriptions(m.data?.descriptions),
-      layout: layout,
-      requiredImages: layoutImages[layout],
-      images: readyImages,
-      overlayMode: resolveOverlayMode(m.data, plugin.settings),
-      fit: m.data?.fit,
-      align: normalizeAlign(m.data?.align, defaultAlign),
-      width: m.data?.width,
-      placeholderUrl: resolvePlaceholderImage(plugin),
+      component: LayoutComponent,
+      componentProps: {
+        caption: m.data?.caption ?? "",
+        descriptions: normalizeDescriptions(m.data?.descriptions),
+        layout: layout,
+        requiredImages: layoutImages[layout],
+        images: readyImages,
+        overlayMode: resolveOverlayMode(m.data, plugin.settings),
+        fit: m.data?.fit,
+        align: normalizeAlign(m.data?.align, defaultAlign),
+        width: m.data?.width,
+        placeholderUrl: resolvePlaceholderImage(plugin),
+      },
+      switchable: ctx.getSectionInfo(parent) !== null,
+      imageCount: readyImages.length,
+      allowCarousel: false,
+      currentLayout: layout,
     },
   });
-  ctx.addChild(new SvelteRenderChild(parent, component));
+  wrapper.$on("apply-layout", (event: CustomEvent<PickerChoice>) => {
+    applyLegacyPickerChoice(plugin, ctx, parent, event.detail);
+  });
+  ctx.addChild(new SvelteRenderChild(parent, wrapper));
 }
