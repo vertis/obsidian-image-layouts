@@ -23,6 +23,12 @@ The number of images varies depending on the layout. If you don't have enough it
 
 See the [Block Options Reference](https://github.com/vertis/obsidian-image-layouts/blob/main/docs/options.md) for everything a layout block accepts.
 
+## Reordering images
+
+On desktop, drag an image directly to reorder it—**no modifier is required by default**. Use the **Drag-to-reorder modifier** plugin setting to require the platform default, Ctrl, Meta/Cmd/Windows, Alt, or Shift instead. An insertion line shows where the image will go. Dropping it updates the Markdown immediately, and one undo restores the previous order.
+
+Reordering works in modern and legacy fixed grids, custom grids, and masonry layouts with explicitly listed images. Inline captions, dimensions, and `descriptions` move with their images. Carousel layouts, `fromFolder` galleries, placeholders, touch gestures, and keyboard reordering are not supported yet.
+
 ## Roadmap
 
 When I find time I'm hoping to add the following:
@@ -35,7 +41,7 @@ When I find time I'm hoping to add the following:
 - Captions from wikilinks, overlay never/hover/always, folder galleries, alignment and fit options [DONE]
 - Visually pick layouts — every layout, in the block and from the command palette [DONE]
 - User-definable custom layouts — `layout: custom` with ASCII-art grids [DONE - NEW!]
-- Drag and drop support
+- Drag and drop support [DONE]
 
 ## Documentation
 

@@ -10,12 +10,14 @@ import {
 } from "../interfaces";
 import type ImageLayoutsPlugin from "../main";
 import { collectBlockImages } from "../utils/block-images";
+import type { ImageReorderDetail } from "../utils/drag-reorder";
 import { renameFenceLayout } from "../utils/editor-writeback";
 import { parseFrontMatterBlock } from "../utils/front-matter";
 import { normalizeAlign, normalizeDescriptions } from "../utils/options";
 import { resolveOverlayMode } from "../utils/overlay";
 import { resolvePlaceholderImage } from "../utils/placeholder";
 import { SvelteRenderChild } from "../utils/svelte-render-child";
+import { applyImageReorder } from "./reorder";
 
 // Single-image blocks aligned to a side, as asked for in #6.
 const ALIGN_SHORTHANDS: Record<string, AlignMode> = {
@@ -86,6 +88,7 @@ export function renderLegacyLayoutComponent(
 ) {
   const m = parseFrontMatterBlock<LayoutBlockOptions>(source);
   const readyImages = collectBlockImages(m.data, m.body, ctx, plugin);
+  const switchable = ctx.getSectionInfo(parent) !== null;
 
   const wrapper = new SwitchableLayout({
     target: parent,
@@ -102,8 +105,10 @@ export function renderLegacyLayoutComponent(
         align: normalizeAlign(m.data?.align, defaultAlign),
         width: m.data?.width,
         placeholderUrl: resolvePlaceholderImage(plugin),
+        reorderEnabled:
+          switchable && !m.data?.fromFolder && readyImages.length > 1,
       },
-      switchable: ctx.getSectionInfo(parent) !== null,
+      switchable,
       imageCount: readyImages.length,
       allowCarousel: false,
       allowCustom: false,
@@ -112,6 +117,9 @@ export function renderLegacyLayoutComponent(
   });
   wrapper.$on("apply-layout", (event: CustomEvent<PickerChoice>) => {
     applyLegacyPickerChoice(plugin, ctx, parent, event.detail);
+  });
+  wrapper.$on("image-reorder", (event: CustomEvent<ImageReorderDetail>) => {
+    applyImageReorder(plugin, ctx, parent, source, event.detail);
   });
   ctx.addChild(new SvelteRenderChild(parent, wrapper));
 }

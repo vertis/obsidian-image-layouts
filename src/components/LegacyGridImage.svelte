@@ -1,6 +1,11 @@
 <script lang="ts">
+  import { createEventDispatcher } from "svelte";
   import type { FitMode } from "../interfaces";
   import type { OverlayMode } from "../types";
+  import {
+    type ImageReorderDetail,
+    reorderImage,
+  } from "../utils/drag-reorder";
 
   export let src: string;
   export let description: string | undefined;
@@ -8,9 +13,14 @@
   export let overlayMode: OverlayMode = "hover";
   export let fit: FitMode = "cover";
   export let width: number | undefined = undefined;
+  export let reorderEnabled = false;
   // Custom layouts place images by inline grid-area (the class-based areas
   // below only exist for indexes 0-6).
   export let gridArea: string | undefined = undefined;
+
+  const dispatch = createEventDispatcher<{
+    "image-reorder": ImageReorderDetail;
+  }>();
 </script>
 
 <div
@@ -19,6 +29,12 @@
   class:fit-natural={fit === "natural"}
   style:max-width={width ? `${width}px` : undefined}
   style:grid-area={gridArea}
+  use:reorderImage={{
+    index,
+    enabled: reorderEnabled,
+    orientation: "horizontal",
+    onReorder: (detail) => dispatch("image-reorder", detail),
+  }}
 >
   <img {src} alt={description ?? `Image ${index + 1}`} />
   {#if description && overlayMode !== "never"}

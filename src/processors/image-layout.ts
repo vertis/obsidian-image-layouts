@@ -21,12 +21,14 @@ import {
   updateLayoutInBlockSource,
 } from "../utils/blocks";
 import { parseCustomGrid } from "../utils/custom-grid";
+import type { ImageReorderDetail } from "../utils/drag-reorder";
 import { writeBlockSource } from "../utils/editor-writeback";
 import { parseFrontMatterBlock } from "../utils/front-matter";
 import { normalizeAlign, normalizeDescriptions } from "../utils/options";
 import { resolveOverlayMode } from "../utils/overlay";
 import { resolvePlaceholderImage } from "../utils/placeholder";
 import { SvelteRenderChild } from "../utils/svelte-render-child";
+import { applyImageReorder } from "./reorder";
 
 const LEGACY_LAYOUT_PREFIX = "legacy-layout-";
 
@@ -76,6 +78,8 @@ export function renderImageLayoutComponent(
   }
 
   const switchable = ctx.getSectionInfo(parent) !== null;
+  const reorderEnabled =
+    switchable && !m.data.fromFolder && readyImages.length > 1;
   const mountSwitchable = (
     component: ComponentType,
     componentProps: Record<string, unknown>,
@@ -94,6 +98,9 @@ export function renderImageLayoutComponent(
     });
     wrapper.$on("apply-layout", (event: CustomEvent<PickerChoice>) => {
       applyChoice(event.detail);
+    });
+    wrapper.$on("image-reorder", (event: CustomEvent<ImageReorderDetail>) => {
+      applyImageReorder(plugin, ctx, parent, source, event.detail);
     });
     ctx.addChild(new SvelteRenderChild(parent, wrapper));
   };
@@ -139,6 +146,7 @@ export function renderImageLayoutComponent(
         overlayMode: resolveOverlayMode(m.data, plugin.settings),
         fit: m.data.fit,
         placeholderUrl: resolvePlaceholderImage(plugin),
+        reorderEnabled,
       },
       "custom",
     );
@@ -155,6 +163,7 @@ export function renderImageLayoutComponent(
         columns: masonryColumns,
         images: readyImages,
         overlayMode: resolveOverlayMode(m.data, plugin.settings),
+        reorderEnabled,
       },
       layout,
     );
@@ -181,6 +190,7 @@ export function renderImageLayoutComponent(
         align: normalizeAlign(m.data.align),
         width: m.data.width,
         placeholderUrl: resolvePlaceholderImage(plugin),
+        reorderEnabled,
       },
       layoutType,
     );

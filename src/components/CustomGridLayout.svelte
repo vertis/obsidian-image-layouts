@@ -14,6 +14,7 @@
   export let overlayMode: OverlayMode = "hover";
   export let fit: FitMode = "cover";
   export let placeholderUrl: string = PLACEHOLDER_DATA_URI;
+  export let reorderEnabled = false;
 
   $: displayImages = padToSlots(images, grid.slots, placeholderUrl);
 </script>
@@ -31,8 +32,10 @@
       description={descriptions[index] ?? image.alt}
       width={image.width}
       gridArea={`image-${index}`}
+      reorderEnabled={reorderEnabled && index < images.length}
       {overlayMode}
       {fit}
+      on:image-reorder
     />
   {/each}
 </div>

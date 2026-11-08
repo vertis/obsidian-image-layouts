@@ -14,6 +14,7 @@ const DEFAULT_SETTINGS: ImageLayoutsSettings = {
   shouldOverlayPermanently: false,
   overlayMode: "hover",
   placeholderImage: "",
+  reorderModifier: "none",
 };
 
 export default class ImageLayoutsPlugin extends Plugin {

@@ -7,10 +7,10 @@ export type FrontMatter = {
 
 export const parseFrontMatterBlock = <T>(
   content: string,
-): { data: T | null; body: string; error?: Error } => {
+): { data: T | null; body: string; bodyBegin?: number; error?: Error } => {
   try {
-    const { attributes: data, body } = fm<T>(content);
-    return { data, body };
+    const { attributes: data, body, bodyBegin } = fm<T>(content);
+    return { data, body, bodyBegin };
   } catch (error) {
     // Keep the raw content as the body: image lines still render, and the
     // layout picker's writeback can't destroy what the user typed.

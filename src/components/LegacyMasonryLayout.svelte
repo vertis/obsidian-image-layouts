@@ -9,6 +9,7 @@
   export let caption: string = "";
   export let descriptions: (string | undefined)[] = [];
   export let overlayMode: OverlayMode = "hover";
+  export let reorderEnabled = false;
 </script>
 
 <div class={`image-layouts-masonry-grid-${columns}`}>
@@ -22,6 +23,8 @@
             width={image.width}
             {index}
             {overlayMode}
+            {reorderEnabled}
+            on:image-reorder
           />
         {/if}
       {/each}

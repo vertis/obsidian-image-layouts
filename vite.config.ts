@@ -61,6 +61,9 @@ export default defineConfig(({ mode }) => {
       sourcemap: "inline",
     },
     test: {
+      alias: {
+        obsidian: new URL("./test/obsidian-mock.ts", import.meta.url).pathname,
+      },
       // environment: "jsdom",
       coverage: {
         reporter: ["text", "json", "html"],

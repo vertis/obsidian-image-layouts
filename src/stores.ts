@@ -5,4 +5,5 @@ export const settings = writable<ImageLayoutsSettings>({
   shouldOverlayPermanently: false,
   overlayMode: "hover",
   placeholderImage: "",
+  reorderModifier: "none",
 });

@@ -21,14 +21,14 @@ function editorForBlock(
 
 // Replaces the content between the fences of the codeblock rendered into
 // `parent` with new source text. Returns false when the block's position
-// can't be resolved or doesn't look like a fenced image-layout block (e.g.
-// an unclosed block at the end of a note, where lineEnd is content, not a
-// fence — writing there would mangle the note).
+// can't be resolved, the fences are invalid, or expectedSource no longer
+// matches the current block body.
 export function writeBlockSource(
   plugin: ImageLayoutsPlugin,
   ctx: MarkdownPostProcessorContext,
   parent: HTMLElement,
   source: string,
+  expectedSource?: string,
 ): boolean {
   const editor = editorForBlock(plugin, ctx);
   const info = ctx.getSectionInfo(parent);
@@ -41,9 +41,19 @@ export function writeBlockSource(
   ) {
     return false;
   }
-  const text = source === "" || source.endsWith("\n") ? source : `${source}\n`;
+  const withTrailingNewline = (value: string) =>
+    value === "" || value.endsWith("\n") ? value : `${value}\n`;
+  if (expectedSource !== undefined) {
+    const currentSource = editor.getRange(
+      { line: info.lineStart + 1, ch: 0 },
+      { line: info.lineEnd, ch: 0 },
+    );
+    if (currentSource !== withTrailingNewline(expectedSource)) {
+      return false;
+    }
+  }
   editor.replaceRange(
-    text,
+    withTrailingNewline(source),
     { line: info.lineStart + 1, ch: 0 },
     { line: info.lineEnd, ch: 0 },
   );
