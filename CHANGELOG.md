@@ -1,5 +1,18 @@
 # Changelog
 
+## Unreleased
+
+### Added
+
+- **Drag to reorder images** (#42): drag an image directly to a before/after
+  insertion point, with no modifier required by default. Modern and legacy fixed
+  grids, custom grids, and masonry layouts write the new order back to the
+  Markdown in one undoable operation, preserving captions, dimensions,
+  `descriptions`, comments, and unrelated frontmatter. The plugin settings can
+  instead require the platform default, Ctrl, Meta/Cmd/Windows, Alt, or Shift.
+  Carousel layouts, `fromFolder` galleries, placeholders, touch, and keyboard
+  reordering are not included yet.
+
 ## 0.18.0
 
 ### Added

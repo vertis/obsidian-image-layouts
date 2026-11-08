@@ -16,6 +16,7 @@
   export let align: AlignMode = "full";
   export let width: number | string | undefined = undefined;
   export let placeholderUrl: string = PLACEHOLDER_DATA_URI;
+  export let reorderEnabled = false;
 
   // If there are fewer images than the layout needs, fill the remaining
   // slots with the placeholder.
@@ -42,8 +43,10 @@
         src={image.link}
         description={descriptions[index] ?? image.alt}
         width={image.width}
+        reorderEnabled={reorderEnabled && index < images.length}
         {overlayMode}
         {fit}
+        on:image-reorder
       />
     {/each}
   </div>

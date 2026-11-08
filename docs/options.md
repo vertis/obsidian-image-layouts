@@ -37,6 +37,27 @@ Images are listed one per line, in either format:
 - `![My caption](https://example.com/image.jpg)` — remote image
 - `![](file:///absolute/path/image.jpg)` — image on disk outside the vault
 
+## Reordering images
+
+On desktop, drag an image directly to reorder it—**no modifier is required by
+default**. The **Drag-to-reorder modifier** plugin setting can instead require
+the platform default, Ctrl, Meta/Cmd/Windows, Alt, or Shift. When using a
+modifier, keep it held while choosing a before/after insertion point and release
+the mouse button before the modifier. Releasing it first cancels the reorder.
+Ordinary image clicks remain unchanged.
+
+A successful drop writes the new image order back to the note as one editor
+operation, so one undo restores the previous order. Inline captions,
+dimensions, and entries in the `descriptions` list move with their images.
+Comments and unrelated frontmatter are preserved.
+
+Reordering is available in modern and legacy fixed grids, custom grids, and
+masonry layouts when the block contains at least two explicitly listed images.
+It is not available for carousel layouts, placeholders, or blocks using
+`fromFolder` (including blocks that mix explicit images with folder images).
+Persistent empty positions, touch gestures, and keyboard reordering are not
+supported yet.
+
 ## Options for all layouts
 
 | Option | Values | Description |
@@ -120,5 +141,7 @@ Images listed in the block body come first, then the folder images.
 ## Settings
 
 - **Overlay mode** — global default for `overlay` (never / hover / always)
+- **Drag-to-reorder modifier** — None (the default), platform default, Ctrl,
+  Meta/Cmd/Windows, Alt, or Shift
 - **Placeholder image** — vault path or `https://` URL used to fill layouts
   that have fewer images than they need; empty uses a built-in placeholder

@@ -4,11 +4,13 @@ import SwitchableLayout from "../components/SwitchableLayout.svelte";
 import type { LayoutBlockOptions, PickerChoice } from "../interfaces";
 import type ImageLayoutsPlugin from "../main";
 import { collectBlockImages } from "../utils/block-images";
+import type { ImageReorderDetail } from "../utils/drag-reorder";
 import { parseFrontMatterBlock } from "../utils/front-matter";
 import { normalizeDescriptions } from "../utils/options";
 import { resolveOverlayMode } from "../utils/overlay";
 import { SvelteRenderChild } from "../utils/svelte-render-child";
 import { applyLegacyPickerChoice } from "./legacy-image-layouts";
+import { applyImageReorder } from "./reorder";
 
 export function addLegacyMasonryMarkdownProcessors(plugin: ImageLayoutsPlugin) {
   for (let columns = 2; columns <= 6; columns++) {
@@ -30,6 +32,7 @@ export function renderLegacyMasonryLayoutComponent(
 ) {
   const m = parseFrontMatterBlock<LayoutBlockOptions>(source);
   const readyImages = collectBlockImages(m.data, m.body, ctx, plugin);
+  const switchable = ctx.getSectionInfo(parent) !== null;
   const wrapper = new SwitchableLayout({
     target: parent,
     props: {
@@ -40,8 +43,10 @@ export function renderLegacyMasonryLayoutComponent(
         columns: columns,
         images: readyImages,
         overlayMode: resolveOverlayMode(m.data, plugin.settings),
+        reorderEnabled:
+          switchable && !m.data?.fromFolder && readyImages.length > 1,
       },
-      switchable: ctx.getSectionInfo(parent) !== null,
+      switchable,
       imageCount: readyImages.length,
       allowCarousel: false,
       allowCustom: false,
@@ -50,6 +55,9 @@ export function renderLegacyMasonryLayoutComponent(
   });
   wrapper.$on("apply-layout", (event: CustomEvent<PickerChoice>) => {
     applyLegacyPickerChoice(plugin, ctx, parent, event.detail);
+  });
+  wrapper.$on("image-reorder", (event: CustomEvent<ImageReorderDetail>) => {
+    applyImageReorder(plugin, ctx, parent, source, event.detail);
   });
   ctx.addChild(new SvelteRenderChild(parent, wrapper));
 }

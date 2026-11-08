@@ -1,4 +1,11 @@
 export type OverlayMode = "never" | "hover" | "always";
+export type ReorderModifier =
+  | "none"
+  | "default"
+  | "ctrl"
+  | "meta"
+  | "alt"
+  | "shift";
 
 export type ImageLayoutsSettings = {
   // Pre-0.16 toggle, superseded by overlayMode. Kept (and mirrored on save)
@@ -6,4 +13,5 @@ export type ImageLayoutsSettings = {
   shouldOverlayPermanently: boolean;
   overlayMode: OverlayMode;
   placeholderImage: string;
+  reorderModifier: ReorderModifier;
 };

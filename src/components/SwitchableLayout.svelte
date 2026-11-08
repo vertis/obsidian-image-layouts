@@ -33,7 +33,7 @@
   />
 {:else}
   <div class="switchable-layout">
-    <svelte:component this={component} {...componentProps} />
+    <svelte:component this={component} {...componentProps} on:image-reorder />
     {#if switchable}
       <button
         type="button"

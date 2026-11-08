@@ -1,16 +1,32 @@
 <script lang="ts">
+  import { createEventDispatcher } from "svelte";
   import type { OverlayMode } from "../types";
+  import {
+    type ImageReorderDetail,
+    reorderImage,
+  } from "../utils/drag-reorder";
 
   export let src: string;
   export let description: string | undefined;
   export let index: number;
   export let overlayMode: OverlayMode = "hover";
   export let width: number | undefined = undefined;
+  export let reorderEnabled = false;
+
+  const dispatch = createEventDispatcher<{
+    "image-reorder": ImageReorderDetail;
+  }>();
 </script>
 
 <div
   class={`group relative image-layouts-masonry-image-${index}`}
   style:max-width={width ? `${width}px` : undefined}
+  use:reorderImage={{
+    index,
+    enabled: reorderEnabled,
+    orientation: "vertical",
+    onReorder: (detail) => dispatch("image-reorder", detail),
+  }}
 >
   <img {src} alt={description ?? `Image ${index + 1}`} />
   {#if description && overlayMode !== "never"}
